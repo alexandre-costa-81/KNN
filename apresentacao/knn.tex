@@ -26,52 +26,51 @@
 \end{frame}
 
 \section{Introdução}
-\begin{frame}{Apresentar o problema}
+\begin{frame}{Objetivo}
 
 \begin{itemize}
-	\item Apresentar o problema
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Apresentar o KNN}
-
-\begin{itemize}
-	\item Apresentar o KNN \cite{wiki:xxx}
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Apresentar a motivação}
-
-\begin{itemize}
-	\item Apresentar a motivação
+	\item Realizar um estudo sobre a aplicação do algoritmo KNN em FPGAs;
+	\item Reconhecimento de indivíduos a partir dos movimentos e dados antropométricos \cite{granaidentificaccao};
+	\item Foi realizado uma conexão entre o Kinect, a placa Altera Cyclone (2C35) e o computador para coleta em tempo real dos dados;
+	\item Construido um ambiente experimental simulado. 
 \end{itemize}
 
 \end{frame}
 
 \section{Conteúdo}
-\begin{frame}{Como foi desenvolvido}
+\begin{frame}{Kinect Versão 2}
 
 \begin{itemize}
-	\item Como foi desenvolvido
+	\item O Kinect é equipado com:
+	\begin{itemize}
+		\item Câmera RGB;
+		\item Sensor de profundidade composto de um emissor de luz infravermelho;
+		\item Câmera sensível à profundidade. 
+	\end{itemize}
+	\item O sensor de profundidade do Kinect emite um padrão de infravermelho;
+	\item A captura simultânea da imagem desse infravermelho com a câmera tradicional;
+	\item Captura o infravermelho e bloqueia outras formas de onda;
+	\item O processador de imagens do Kinect usa as posições relativas dos pontos no padrão do infravermelho para calcular o deslocamento da profundidade em cada posição de pixel na imagem.
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Problemas encontrados}
+\begin{frame}{Kinect Versão 2}
 
 \begin{itemize}
-	\item Problemas encontrados
+	\item Cada pixel do mapa de profundidade representa a distância cartesiana do plano da câmera até o objeto mais próximo, naquela coordenada (x, y) em particular;
+	\item Se o valor do pixel é 0, isso indica que o sensor não encontrou nenhum objeto no seu espaço de alcance naquela localização (x, y).
+	\item Essa projeção é mencionado como espaço de profundidade.
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Como foram resolvidos}
+\begin{frame}{Algoritmo KNN}
 
 \begin{itemize}
-	\item Como foram resolvidos
+	\item O algoritmo K-NN é utilizado para classificar um objeto não rotulado, baseado no rótulo de seus vizinhos mais próximos;
+	\item Essa proximidade é baseada em uma métrica de distância entre dois pontos (distância Euclidiana);
+	\item A regra de classificação do k-NN é associar a uma amostra de teste, o rótulo da maioria das categorias de seus “k” vizinhos mais próximos;
 \end{itemize}
 
 \end{frame}
