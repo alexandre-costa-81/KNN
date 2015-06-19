@@ -10,23 +10,16 @@
      
 \sloppy
 
-\title{Instructions for Authors of SBC Conferences\\ Papers and Abstracts}
+\title{Implementa\c{c}\~ao do k-nearest neighbors -- KNN\\ em VHDL}
 
-\author{Luciana P. Nedel\inst{1}, Rafael H. Bordini\inst{2}, Flávio Rech
-  Wagner\inst{1}, Jomi F. Hübner\inst{3} }
+\author{Alexandre G. da Costa\inst{1}, Diego P. Jaccottet\inst{1}, Leandro W.
+  Dias\inst{1} }
 
 
-\address{Instituto de Informática -- Universidade Federal do Rio Grande do Sul
-  (UFRGS)\\
-  Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
-\nextinstitute
-  Department of Computer Science -- University of Durham\\
-  Durham, U.K.
-\nextinstitute
-  Departamento de Sistemas e Computação\\
-  Universidade Regional de Blumenal (FURB) -- Blumenau, SC -- Brazil
-  \email{\{nedel,flavio\}@inf.ufrgs.br, R.Bordini@durham.ac.uk,
-  jomi@inf.furb.br}
+\address{CDTec -- Universidade Federal de Pelotas
+  (UFPEL)\\
+  CEP 96.010-610 -- Pelotas -- RS -- Brazil
+  \email{alexandre.costa@inf.ufpel.edu.br, \{diego.porto.j,lwdias\}@gmail.com}
 }
 
 \begin{document} 
@@ -34,80 +27,74 @@
 \maketitle
 
 \begin{abstract}
-  This meta-paper describes the style to be used in articles and short papers
-  for SBC conferences. For papers in English, you should add just an abstract
-  while for the papers in Portuguese, we also ask for an abstract in
-  Portuguese (``resumo''). In both cases, abstracts should not have more than
-  10 lines and must be in the first page of the paper.
+  This paper describes ...
 \end{abstract}
      
 \begin{resumo} 
-  Este meta-artigo descreve o estilo a ser usado na confecção de artigos e
-  resumos de artigos para publicação nos anais das conferências organizadas
-  pela SBC. É solicitada a escrita de resumo e abstract apenas para os artigos
-  escritos em português. Artigos em inglês deverão apresentar apenas abstract.
-  Nos dois casos, o autor deve tomar cuidado para que o resumo (e o abstract)
-  não ultrapassem 10 linhas cada, sendo que ambos devem estar na primeira
-  página do artigo.
+  Este artigo descreve ...
 \end{resumo}
 
 
-\section{General Information}
+\section{Introdu\c{c}\~ao}
 
-All full papers and posters (short papers) submitted to some SBC conference,
-including any supporting documents, should be written in English or in
-Portuguese. The format paper should be A4 with single column, 3.5 cm for upper
-margin, 2.5 cm for bottom margin and 3.0 cm for lateral margins, without
-headers or footers. The main font must be Times, 12 point nominal size, with 6
-points of space before each paragraph. Page numbers must be suppressed.
+O objetivo deste projeto é implementar o algoritmo KNN na placa Altera Cyclone
+(2C35) FPGA de 35.000 LEs, afim de reconhecer indivíduos. Sendo que a entrada
+será o esqueleto do indivíduo, esse esqueleto é inferido a partir de filmagem
+tridimensional realizada pelo Kinect Versão 2 pelo seu SDK. 
 
-Full papers must respect the page limits defined by the conference.
-Conferences that publish just abstracts ask for \textbf{one}-page texts.
+\section{Kinect Vers\~ao 2} \label{sec:kinectversion2}
 
-\section{First Page} \label{sec:firstpage}
+O Kinect é um sensor equipado de uma câmera RGB, um sensor de profundidade
+composto de um emissor de luz infravermelho e uma câmera sensível à
+profundidade. 
 
-The first page must display the paper title, the name and address of the
-authors, the abstract in English and ``resumo'' in Portuguese (``resumos'' are
-required only for papers written in Portuguese). The title must be centered
-over the whole page, in 16 point boldface font and with 12 points of space
-before itself. Author names must be centered in 12 point font, bold, all of
-them disposed in the same line, separated by commas and with 12 points of
-space after the title. Addresses must be centered in 12 point font, also with
-12 points of space after the authors' names. E-mail addresses should be
-written using font Courier New, 10 point nominal size, with 6 points of space
-before and 6 points of space after.
+O principio básico por trás do sensor de profundidade do Kinect é a emissão
+de um padrão de infravermelho e a captura simultânea da imagem desse
+infravermelho com uma câmera tradicional equipada com um filtro, que permite
+capturar o infravermelho e bloquear outras formas de onda. O processador de
+imagens do Kinect usa as posições relativas dos pontos no padrão do
+infravermelho para calcular o deslocamento da profundidade em cada posição de
+pixel na imagem.
 
-The abstract and ``resumo'' (if is the case) must be in 12 point Times font,
-indented 0.8cm on both sides. The word \textbf{Abstract} and \textbf{Resumo},
-should be written in boldface and must precede the text.
+Cada pixel do mapa de profundidade representa a distância cartesiana,
+em milímetros, do plano da câmera até o objeto mais próximo, naquela coordenada
+(x, y) em particular. Se o valor do pixel é 0, isso indica que o sensor não
+encontrou nenhum objeto no seu espaço de alcance naquela localização (x, y).
+Essa projeção é mencionado como espaço de profundidade. Os valores correntes
+de profundidade são as distâncias do plano da câmera, ao invés das do sensor
+propriamente dito.
 
-\section{CD-ROMs and Printed Proceedings}
+\section{Algoritmo KNN}
 
-In some conferences, the papers are published on CD-ROM while only the
-abstract is published in the printed Proceedings. In this case, authors are
-invited to prepare two final versions of the paper. One, complete, to be
-published on the CD and the other, containing only the first page, with
-abstract and ``resumo'' (for papers in Portuguese).
+O algoritmo de aprendizado supervisionado KNN é utilizado para classificar um
+objeto não rotulado, baseado no rótulo de seus vizinhos mais próximos em um
+espaço de exemplos. Essa proximidade é, frequentemente, baseada em uma métrica
+de distância entre dois pontos, por exemplo, a distância Euclidiana. De maneira
+simplificada, a regra de classificação do KNN é associar a uma amostra de
+teste, o rótulo da maioria das categorias de seus ``k'' vizinhos mais próximos. 
 
-\section{Sections and Paragraphs}
-
-Section titles must be in boldface, 13pt, flush left. There should be an extra
-12 pt of space before each title. Section numbering is optional. The first
-paragraph of each section should not be indented, while the first lines of
-subsequent paragraphs should be indented by 1.27 cm.
-
-\subsection{Subsections}
-
-The subsection titles must be in boldface, 12pt, flush left.
-
-\section{Figures and Captions}\label{sec:figs}
+Um conjunto de treino X consiste em n pares de vetores e rótulos, dispersos em
+um espaço de classes. Dado um novo par (x; θ), onde apenas a medida x é
+observável, o valor de θ é estimado pela utilização dos dados contidos no
+conjunto X com os vetores e rótulos já conhecidos (supervisionado). Um vetor x'
+é um vizinho mais próximo de x, se segundo a Equação:
 
 
-Figure and table captions should be centered if less than one line
+\section{Descric\~ao VHDL do Kinect vers\~ao 2}
+
+Esta seção descreve o Kinect versão 2 em VHDL...
+
+\section{Descric\~ao VHDL do algoritmo KNN}
+
+Esta seção descreve o algoritmo KNN em VHDL
+
+
+\section{Conclus\~ao}\label{sec:figs}
+
+Este trabalho desenvolveu um algoritmo em VHDL que...
+
 %(Figure~\ref{fig:exampleFig1}), otherwise justified and indented by 0.8cm on
 %both margins, as shown in Figure~\ref{fig:exampleFig2}. The caption font must
-be Helvetica, 10 point, boldface, with 6 points of space before and after each
-caption.
 
 %\begin{figure}[ht]
 %\centering
@@ -124,14 +111,6 @@ caption.
 %\label{fig:exampleFig2}
 %\end{figure}
 
-In tables, try to avoid the use of colored or shaded backgrounds, and avoid
-thick, doubled, or unnecessary framing lines. When reporting empirical data,
-do not use more decimal digits than warranted by their precision and
-reproducibility. Table caption must be placed before the table (see Table 1)
-and the font used must also be Helvetica, 10 point, boldface, with 6 points of
-space before and after each caption.
-
-
 %\begin{table}[ht]
 %\centering
 %\caption{Variables to be considered on the evaluation of interaction
@@ -140,24 +119,13 @@ space before and after each caption.
 %\includegraphics[width=.7\textwidth]{table.jpg}
 %\end{table}
 
-\section{Images}
+%Bibliographic references must be unambiguous and uniform.  We recommend giving
+%the author names references in brackets, e.g. \cite{knuth:84},
+%\cite{boulic:91}, and \cite{smith:99}.
 
-All images and illustrations should be in black-and-white, or gray tones,
-excepting for the papers that will be electronically available (on CD-ROMs,
-internet, etc.). The image resolution on paper should be about 600 dpi for
-black-and-white images, and 150-300 dpi for grayscale images.  Do not include
-images with excessive resolution, as they may take hours to print, without any
-visible difference in the result. 
-
-\section{References}
-
-Bibliographic references must be unambiguous and uniform.  We recommend giving
-the author names references in brackets, e.g. \cite{knuth:84},
-\cite{boulic:91}, and \cite{smith:99}.
-
-The references must be listed using 12 point font size, with 6 points of space
-before each reference. The first line of each reference should not be
-indented, while the subsequent should be indented by 0.5 cm.
+%The references must be listed using 12 point font size, with 6 points of space
+%before each reference. The first line of each reference should not be
+%indented, while the subsequent should be indented by 0.5 cm.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
