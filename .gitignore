@@ -6,6 +6,7 @@
 !*.vhd
 !*.tex
 !*.bib
+!*.sty
 # etc...
 
 # ...even if they are in subdirectories
