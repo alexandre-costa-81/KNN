@@ -4,8 +4,8 @@
 
 \usepackage{graphicx,url}
 
-\usepackage[brazil]{babel}   
-%\usepackage[latin1]{inputenc}  
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}  
 
      
 \sloppy
@@ -68,21 +68,42 @@ propriamente dito.
 
 O algoritmo de aprendizado supervisionado KNN é utilizado para classificar um
 objeto não rotulado, baseado no rótulo de seus vizinhos mais próximos em um
-espaço de exemplos. Essa proximidade é, frequentemente, baseada em uma métrica
+espaço de exemplos \cite{Cechinel:Disertacao:2014}. Essa proximidade é, frequentemente, baseada em uma métrica
 de distância entre dois pontos, por exemplo, a distância Euclidiana. De maneira
 simplificada, a regra de classificação do KNN é associar a uma amostra de
 teste, o rótulo da maioria das categorias de seus ``k'' vizinhos mais próximos. 
 
 Um conjunto de treino X consiste em n pares de vetores e rótulos, dispersos em
-um espaço de classes. Dado um novo par (x; θ), onde apenas a medida x é
-observável, o valor de θ é estimado pela utilização dos dados contidos no
+um espaço de classes. Dado um novo par (x; $\theta$), onde apenas a medida x é
+observável, o valor de $\theta$	é estimado pela utilização dos dados contidos no
 conjunto X com os vetores e rótulos já conhecidos (supervisionado). Um vetor x'
 é um vizinho mais próximo de x, se segundo a Equação:
 
+$d(x_{n}', x) = min(x_i, x) i = 1, 2, ...,n$
+
+A distância mínima entre um vetor vizinho e o vetor testado são iguais ao 
+conjunto de distâncias mínimas entre os outros vetores e o vetor testado.
+Normalmente, o ``voto'' do vizinho possui um peso, de acordo com a distância do 
+vetor testado e seus ``k'' vizinhos mais próximos. Assim, $\theta$ é estimado 
+com o rótulo desses ``k'' vizinhos mais próximos, como mostra a Figura:
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.5\textwidth]{img/knn.png}
+	\caption{Um vetor com classe desconhecida e seus 4 vizinhos}
+	\label{fig:fig1}
+\end{figure}
+
+A figura mostra a representação visual de 19 vetores rotulados com classe A e B
+e uma classe desconhecida. O vetor com classe desconhecida é portanto, rotulado
+com seus 4 (k=4) vizinhos mais próximos de acordo com a distância euclidiana 
+entre eles.
 
 \section{Descric\~ao VHDL do Kinect vers\~ao 2}
 
-Esta seção descreve o Kinect versão 2 em VHDL...
+Esta seção descreve, em VHDL, como foi implementado a comunicação do Kinect 
+versão 2 com a placa Altera Cyclone (2C35) FPGA de 35.000 LEs, bem como 
+aquisição dos exemplos e aquisição da imagem a ser comparada ...
 
 \section{Descric\~ao VHDL do algoritmo KNN}
 
@@ -128,6 +149,6 @@ Este trabalho desenvolveu um algoritmo em VHDL que...
 %indented, while the subsequent should be indented by 0.5 cm.
 
 \bibliographystyle{sbc}
-\bibliography{sbc-template}
+\bibliography{knn}
 
 \end{document}
