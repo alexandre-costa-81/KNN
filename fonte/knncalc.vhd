@@ -14,8 +14,8 @@ entity knncalc is
 
       -- OUT
       --sub_result                  : out std_logic_vector (31 downto 0);
-      --add_result                  : out std_logic_vector (31 downto 0);
-      --exp_result                  : out std_logic_vector (31 downto 0);
+      add_result                  : out std_logic_vector (31 downto 0);
+      exp_result                  : out std_logic_vector (31 downto 0);
       memory                     : out std_logic_vector (31 downto 0);
       memory_knt                 : out std_logic_vector (31 downto 0);
       memory_result              : out std_logic_vector (31 downto 0);
@@ -23,7 +23,6 @@ entity knncalc is
       address_exp                : out std_logic_vector (11 downto 0);
       address_result             : out std_logic_vector (11 downto 0);
       state                      : out integer;
-      aux                        : out integer range 0 to 75;
       less_distance_out          : out std_logic_vector (31 downto 0);
       acc_out                    : out std_logic_vector (31 downto 0);
       dataa_out                  : out std_logic_vector (31 downto 0);
@@ -33,7 +32,9 @@ entity knncalc is
       reset_out                  : out std_logic;
       sqrt_result                : out std_logic_vector (31 downto 0);
       control_less_distance_out  : out std_logic;
-      reset_ld_out               : out std_logic
+      reset_ld_out               : out std_logic;
+		end_knn_out						: out std_logic;
+		alb_out						   : out std_logic
       );
 end knncalc;
 
@@ -62,6 +63,7 @@ architecture arq of knncalc is
 	signal reset_ld						 : std_logic;
 	signal alb_signal						 : std_logic;
 	signal ld_out							 : std_logic_vector (31 downto 0);
+	signal end_knn                    : std_logic;
 	
 	-- memory
 	-- wren = '0' read only
@@ -121,18 +123,27 @@ architecture arq of knncalc is
 			data						: out std_logic_vector (31 downto 0);
 			wren						: out std_logic;
 			st							: out integer;
-			aux						: out integer;
 			wren_knt					: out std_logic;
 			wren_result				: out std_logic;
 			data_knt					: out std_logic_vector (31 downto 0);
 			control_acc				: out std_logic;
 			reset_acc				: out std_logic;
 			control_less_distance: out std_logic;
-			reset_ld_out			: out std_logic
+			reset_ld_out			: out std_logic;
+			end_knn					: out std_logic
 		);
 	end component;
 
 	component reg is
+		port (
+			load	: in 	std_logic;
+			reset : in 	std_logic;
+			d		: in 	std_logic_vector(31 downto 0);
+			q		: out std_logic_vector(31 downto 0)
+		);
+	end component;
+	
+	component reg_acc is
 		port (
 			load	: in 	std_logic;
 			reset : in 	std_logic;
@@ -167,12 +178,12 @@ architecture arq of knncalc is
 		pre_add			: fp_add_sub port map(add_sub => '1', clock => clock, dataa => "01000001001000000000000000000000", datab => result_sub, result => result_pre_add);
 		exp				: fp_mult port map (clock => clock, dataa => result_pre_add, datab => result_pre_add, result => exp_add);
 		add				: fp_add_sub port map(add_sub => '1', clock => clock, dataa => exp_add, datab => acc_mem, result => add_acc);
-		acc				: reg port map(load => control_acc, d => add_acc, q => acc_mem, reset => reset_acc);
+		acc				: reg_acc port map(load => control_acc, d => add_acc, q => acc_mem, reset => reset_acc);
 		sqrt				: fp_sqrt port map(clock => clock, data => acc_mem, result => sqrt_mem);		
-		control			: control_unit port map(alb => alb_signal, control_less_distance => control_less_distance, control_acc => control_acc, wren_knt => wren_knt, data_knt => data_knt, aux => aux, st => state, clock => clock, reset => reset, address_exp => mem_exp_control_address, address_knt => mem_knt_control_address, data => control_mem_data, wren => mem_wren_control, address_result => mem_result_control_address, wren_result => wren_result, reset_acc => reset_acc, reset_ld_out => reset_ld);	
-		mem_result		: ram  port map(address => mem_result_control_address, clock => clock, data => sqrt_mem, wren => wren_result, q => mem_result_data);
-		less_distance	: reg port map(load => control_less_distance, d => mem_result_data, q => ld_out, reset => reset_ld);
-		compare			: fp_compare port map(clock => clock, dataa => mem_result_data, datab => ld_out, alb => alb_signal);
+		control			: control_unit port map(end_knn => end_knn, alb => alb_signal, control_less_distance => control_less_distance, control_acc => control_acc, wren_knt => wren_knt, data_knt => data_knt, st => state, clock => clock, reset => reset, address_exp => mem_exp_control_address, address_knt => mem_knt_control_address, data => control_mem_data, wren => mem_wren_control, address_result => mem_result_control_address, wren_result => wren_result, reset_acc => reset_acc, reset_ld_out => reset_ld);	
+		--mem_result		: ram  port map(address => mem_result_control_address, clock => clock, data => sqrt_mem, wren => wren_result, q => mem_result_data);
+		less_distance	: reg port map(load => control_less_distance, d => sqrt_mem, q => ld_out, reset => reset_ld);
+		compare			: fp_compare port map(clock => clock, dataa => sqrt_mem, datab => ld_out, alb => alb_signal);
 		
 		memory							<= mem_exp_sub_data;
 		memory_knt						<= mem_knt_sub_data;
@@ -182,8 +193,8 @@ architecture arq of knncalc is
 		acc_out							<= acc_mem;
 		control_acc_out				<= control_acc;
 		--sub_result	 					<= result_sub;
-		--add_result						<= add_acc;
-		--exp_result						<= exp_add;		
+		add_result						<= add_acc;
+		exp_result						<= exp_add;		
 		dataa_out						<= mem_exp_sub_data;
 		datab_out						<= mem_knt_sub_data;
 		pre_add_out						<= result_pre_add;
@@ -193,4 +204,6 @@ architecture arq of knncalc is
 		control_less_distance_out	<= control_less_distance;
 		less_distance_out				<= ld_out;
 		reset_ld_out					<= reset_ld;
+		end_knn_out					   <= end_knn;
+		alb_out                    <= alb_signal;
 end arq;

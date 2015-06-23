@@ -22,17 +22,17 @@ entity control_unit is
       wren_knt                : out std_logic;
       wren_result             : out std_logic;
       st                      : out integer;
-      aux                     : out integer;
       control_acc             : out std_logic;
       reset_acc               : out std_logic;
       control_less_distance   : out std_logic;
-      reset_ld_out            : out std_logic
+      reset_ld_out            : out std_logic;
+		end_knn				      : out std_logic
    );
 end control_unit;
 
 architecture arq of control_unit is
 -- TYPEs
-type state is (initial, load_memory, load_memory_it, accumulate_reset, accumulate, accumulate_it, sqrt, sqrt_it, accumulate_load, mem_result_load, iterate, less_distance, less_distance_it, final);
+type state is (initial, load_memory, load_memory_it, accumulate_reset, accumulate, accumulate_it, sqrt, sqrt_it, accumulate_load, mem_result_load, mem_result_load_it, iterate, final);
 
 -- SIGNALs
 signal current_state             : state;
@@ -56,6 +56,7 @@ signal aux_accumulate_tmp        : integer;
 signal mod_accumulate_tmp        : integer;
 signal result_accumulate_tmp     : integer;
 signal less_distance_tmp         : integer;
+signal comp_ok							: std_logic;
 
 begin
    process (reset, clock)
@@ -81,10 +82,11 @@ begin
    begin
       case current_state is
          when initial =>
-            counter_clock           <= '0';
-            counter_memory_clear    <= '1';
-            counter_accumulate_clear<= '1';
-            address_knt_tmp         := "000000000000";
+            counter_clock             <= '0';
+            counter_memory_clear      <= '1';
+            counter_accumulate_clear  <= '1';
+				control_less_distance_tmp <= '1';
+            address_knt_tmp           := "000000000000";
             address_exp_tmp         := "000000000000";
             address_result_tmp      := "000000000000";
             data_tmp                := "00000000000000000000000000000000";
@@ -102,6 +104,7 @@ begin
             counter_clock        <= '1';
             reset_acc            <= '0';
             counter_memory_clear <= '0';
+				control_less_distance_tmp <= '0';
             reset_ld             <= '0';
             address_knt_tmp      := std_logic_vector(to_unsigned(aux_tmp, address_knt_tmp'length));
             address_exp_tmp      := std_logic_vector(to_unsigned(aux_tmp, address_exp_tmp'length));
@@ -210,6 +213,7 @@ begin
             reset_acc            <= '0';
             reset_ld             <= '0';
             counter_memory_clear <= '0';
+				control_less_distance_tmp <= '0';
             wren_tmp             := '0';
             wren_knt_tmp         := '0';
             wren_result_tmp      := '0';
@@ -225,6 +229,7 @@ begin
             wren_knt_tmp            := '0';
             counter_clock           <= '0';
             reset_acc               <= '0';
+				control_less_distance_tmp <= '0';
             counter_memory_clear    <= '0';
             counter_accumulate_clear<= '1';
             wren_result_tmp         := '0';
@@ -242,6 +247,7 @@ begin
             counter_clock           <= '1';
             counter_memory_clear    <= '0';
             wren_result_tmp         := '0';
+				control_less_distance_tmp <= '0';
             counter_accumulate_clear<= '0';
             sqrt_calculing          <= '0';
             st                      <= 4;
@@ -260,6 +266,7 @@ begin
             counter_clock           <= '0';
             reset_acc               <= '0';
             counter_memory_clear    <= '0';
+				control_less_distance_tmp <= '0';
             counter_accumulate_clear<= '0';
             wren_result_tmp         := '0';
             sqrt_calculing          <= '0';
@@ -276,6 +283,7 @@ begin
             wren_knt_tmp            := '0';
             wren_result_tmp         := '0';
             counter_clock           <= '0';
+				control_less_distance_tmp <= '0';
             counter_memory_clear    <= '0';
             counter_accumulate_clear<= '0';
             st                      <= 6;
@@ -296,6 +304,7 @@ begin
             sqrt_calculing          <= '1';
             counter_clock           <= '1';
             counter_memory_clear    <= '0';
+				control_less_distance_tmp <= '0';
             wren_result_tmp         := '0';
             counter_accumulate_clear<= '0';
             st                      <= 7;
@@ -315,6 +324,7 @@ begin
             reset_acc               <= '0';
             reset_ld                <= '0';
             wren_result_tmp         := '0';
+				control_less_distance_tmp <= '0';
             sqrt_calculing          <= '1';
             counter_clock           <= '0';
             counter_memory_clear    <= '0';
@@ -327,12 +337,45 @@ begin
             address_exp_tmp         := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
             address_result_tmp      := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
             wren_result_tmp         := '1';
-            sqrt_calculing          <= '0';
+            sqrt_calculing          <= '1';
             reset_acc               <= '0';
             reset_ld                <= '0';
-            st                      <= 9;	
+				counter_clock           <= '1';
+				if (alb = '1') then
+					control_less_distance_tmp <= '1';
+				else
+					control_less_distance_tmp <= '0';
+				end if;
+				
+				if (comp_ok = '0') then
+               next_state <= mem_result_load_it;
+            else
+               next_state <= iterate;
+            end if;
+				
+				st                      <= 99;	
             counter_accumulate_clear<= '0';
-            next_state              <= iterate;
+            
+				
+			when mem_result_load_it =>
+				address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
+            address_exp_tmp         := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
+            address_result_tmp      := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
+            wren_result_tmp         := '1';
+            sqrt_calculing          <= '1';
+            reset_acc               <= '0';
+            reset_ld                <= '0';
+				counter_clock           <= '0';
+				if (alb = '1') then
+					control_less_distance_tmp <= '1';
+				else
+					control_less_distance_tmp <= '0';
+				end if;
+				
+				st                      <= 9;	
+            counter_accumulate_clear<= '0';
+            next_state              <= mem_result_load;
+				
 
          when iterate =>
             address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
@@ -340,6 +383,7 @@ begin
             address_result_tmp      := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
             wren_result_tmp         := '0';
             sqrt_calculing          <= '0';
+				control_less_distance_tmp <= '0';
             reset_acc               <= '1';
             reset_ld                <= '0';
             st                      <= 11;
@@ -348,45 +392,8 @@ begin
             if (end_accumulate_loop = '0') then
                next_state <= accumulate;
             else
-               next_state <= less_distance;
-            end if;
-               
-         when less_distance =>
-            address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
-            address_exp_tmp         := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
-            address_result_tmp      := std_logic_vector(to_unsigned(less_distance_tmp, address_result_tmp'length));
-            wren_tmp                := '0';
-            wren_knt_tmp            := '0';
-            reset_acc               <= '0';
-            reset_ld                <= '0';
-            sqrt_calculing          <= '0';
-            counter_clock           <= '1';
-            counter_memory_clear    <= '0';	
-            wren_result_tmp         := '0';
-            counter_accumulate_clear<= '0';
-            st                      <= 12;
-
-            if (less_ok = '0') then
-               next_state <= less_distance_it;
-            else
                next_state <= final;
-            end if;
-
-         when less_distance_it =>
-            address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
-            address_exp_tmp         := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
-            address_result_tmp      := std_logic_vector(to_unsigned(less_distance_tmp, address_result_tmp'length));
-            wren_tmp                := '0';
-            wren_knt_tmp            := '0';
-            reset_acc               <= '0';
-            reset_ld                <= '0';
-            wren_result_tmp         := '0';
-            sqrt_calculing          <= '0';
-            counter_clock           <= '0';
-            counter_memory_clear    <= '0';
-            counter_accumulate_clear<= '0';
-            st <= 13;
-            next_state              <= less_distance;
+            end if;        
 
          when final =>
             address_knt_tmp         := "000000000000";
@@ -394,6 +401,7 @@ begin
             address_result_tmp      := "000000000000";
             wren_tmp                := '0';
             wren_knt_tmp            := '0';
+				control_less_distance_tmp <= '0';
             wren_result_tmp         := '0';
             reset_ld                <= '0';
             counter_memory_clear    <= '0';
@@ -413,6 +421,7 @@ begin
       wren_result          <= wren_result_tmp;
       address_result       <= address_result_tmp;
       control_less_distance<= control_less_distance_tmp;
+		reset_ld_out			<= reset_ld;
    end process;
 
    -- LOOP -> Counter of memory management
@@ -465,55 +474,59 @@ begin
          less_ok                       <= '0';
          repeated                      := 1;
          counter_result_address        := 0;
+			comp_ok								<= '0';
       elsif (counter_clock'event and counter_clock = '1') then
          sqrt_ok <= '0';
-         if (end_accumulate_loop = '0') then
-            if (sqrt_calculing = '0') then
-               if (counter_accumulate < number_of_clocks * repeated) then
-                  counter_accumulate   := counter_accumulate + 1;
-                  control_acc_aux      := '0';
-               else
-                  control_acc_aux            := '1';
-                  counter_accumulate         := counter_accumulate + 1;
-                  counter_accumulate_address := counter_accumulate_address + 1;	
-                  mod_aux                    := counter_accumulate_address mod 6;
-                  if (mod_aux = 0) then
-                     example_ok <= '1';
-                  end if;
+        
+			if (sqrt_calculing = '0') then
+				if (counter_accumulate < number_of_clocks * repeated) then
+					counter_accumulate   := counter_accumulate + 1;
+					control_acc_aux      := '0';
+				else
+					control_acc_aux            := '1';
+					counter_accumulate         := counter_accumulate + 1;
+					counter_accumulate_address := counter_accumulate_address + 1;	
+					mod_aux                    := counter_accumulate_address mod 6;
+					if (mod_aux = 0) then
+						example_ok <= '1';
+					end if;
 
-                  repeated  := repeated + 1;
+					repeated  := repeated + 1;
 
-                  if (counter_accumulate_address = number_of_data_columns * repeated) then
-                     end_accumulate_loop <= '1';
-                  end if;
-               end if;
-            else 
-               control_acc_aux := '0';
-               if (sqrt_counter < sqrt_clocks) then
-                  sqrt_counter := sqrt_counter + 1;
-               else
-                  repeated := 1;
-                  counter_accumulate := 0;
-                  sqrt_ok  <= '1';	
-                  example_ok <= '0';
-                  counter_result_address := counter_result_address + 1;
-               end if;
-            end if;
-         else
-            if (counter_less_distance_address < (number_of_data_columns / number_of_data_knt_columns)) then
-               counter_less_distance_address := counter_less_distance_address + 1;
-            else
-               less_ok <= '1';
-            end if;
-         end if;
+					if (counter_accumulate_address = number_of_data_columns * repeated) then
+						end_accumulate_loop <= '1';
+					end if;
+				end if;
+			else 
+				control_acc_aux := '0';
+				if (sqrt_counter < sqrt_clocks) then
+					sqrt_counter := sqrt_counter + 1;
+				else
+					repeated := 1;
+					counter_accumulate := 0;
+					sqrt_ok  <= '1';	
+					example_ok <= '0';
+					
+					if (counter_result_address > 5) then
+						comp_ok <= '1';
+						counter_result_address := 0;
+					else
+						counter_result_address := counter_result_address + 1;
+					end if;
+					
+					
+				end if;
+			end if;
+		end if;	
 
-      end if;
+   
       aux_accumulate_tmp <= counter_accumulate_address;
       mod_accumulate_tmp <= mod_aux;
       control_acc_tmp	 <= control_acc_aux;
       examples_completed <= repeated;
       result_accumulate_tmp <= counter_result_address;
       less_distance_tmp <= counter_less_distance_address;
+		end_knn <= end_accumulate_loop;
    end process;
 
 end arq;
