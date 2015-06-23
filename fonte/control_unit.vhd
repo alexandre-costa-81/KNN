@@ -9,7 +9,8 @@ entity control_unit is
 	port(
 		-- IN
 		clock			: in std_logic;
-		reset			: in std_logic;	
+		reset			: in std_logic;
+		alb			: in std_logic;	
 
 		-- OUT
 		address_exp	: out std_logic_vector (11 downto 0);
