@@ -72,12 +72,12 @@ begin
 	process (current_state)
 	variable address_knt_tmp	: std_logic_vector (11 downto 0);
 	variable address_exp_tmp	: std_logic_vector (11 downto 0);
-	variable address_result_tmp	: std_logic_vector (11 downto 0);
-	variable data_tmp	   : std_logic_vector (31 downto 0);
-	variable data_knt_tmp: std_logic_vector (31 downto 0);
-	variable wren_tmp		: std_logic;
-	variable wren_knt_tmp: std_logic;
-	variable wren_result_tmp: std_logic;
+	variable address_result_tmp: std_logic_vector (11 downto 0);
+	variable data_tmp	   		: std_logic_vector (31 downto 0);
+	variable data_knt_tmp		: std_logic_vector (31 downto 0);
+	variable wren_tmp				: std_logic;
+	variable wren_knt_tmp		: std_logic;
+	variable wren_result_tmp	: std_logic;
 	
 	
 	begin
