@@ -7,34 +7,34 @@ library altera_mf;
 use altera_mf.altera_mf_components.all;
 
 entity knncalc is
-	port (
-		-- IN
-	   clock								: in 	std_logic;
-		reset								: in 	std_logic;
-		
-		-- OUT
-		--sub_result						: out std_logic_vector (31 downto 0);
-		--add_result						: out std_logic_vector (31 downto 0);
-		--exp_result						: out std_logic_vector (31 downto 0);
-		memory							: out std_logic_vector (31 downto 0);
-		memory_knt 						: out std_logic_vector (31 downto 0);
-		memory_result					: out std_logic_vector (31 downto 0);
-		address_knt						: out std_logic_vector (11 downto 0);
-		address_exp						: out std_logic_vector (11 downto 0);
-		address_result					: out std_logic_vector (11 downto 0);
-		state								: out integer;
-		aux	  							: out integer range 0 to 75;
-		less_distance_out				: out std_logic_vector (31 downto 0);
-		acc_out	  						: out std_logic_vector (31 downto 0);
-		dataa_out 						: out std_logic_vector (31 downto 0);
-		datab_out 						: out std_logic_vector (31 downto 0);
-		pre_add_out 					: out std_logic_vector (31 downto 0);
-		control_acc_out				: out std_logic;
-		reset_out						: out std_logic;
-		sqrt_result						: out std_logic_vector (31 downto 0);
-		control_less_distance_out	: out std_logic;		
-		reset_ld_out					: out std_logic
-		);
+   port (
+      -- IN
+      clock                      : in  std_logic;
+      reset                      : in  std_logic;
+
+      -- OUT
+      --sub_result                  : out std_logic_vector (31 downto 0);
+      --add_result                  : out std_logic_vector (31 downto 0);
+      --exp_result                  : out std_logic_vector (31 downto 0);
+      memory                     : out std_logic_vector (31 downto 0);
+      memory_knt                 : out std_logic_vector (31 downto 0);
+      memory_result              : out std_logic_vector (31 downto 0);
+      address_knt                : out std_logic_vector (11 downto 0);
+      address_exp                : out std_logic_vector (11 downto 0);
+      address_result             : out std_logic_vector (11 downto 0);
+      state                      : out integer;
+      aux                        : out integer range 0 to 75;
+      less_distance_out          : out std_logic_vector (31 downto 0);
+      acc_out                    : out std_logic_vector (31 downto 0);
+      dataa_out                  : out std_logic_vector (31 downto 0);
+      datab_out                  : out std_logic_vector (31 downto 0);
+      pre_add_out                : out std_logic_vector (31 downto 0);
+      control_acc_out            : out std_logic;
+      reset_out                  : out std_logic;
+      sqrt_result                : out std_logic_vector (31 downto 0);
+      control_less_distance_out  : out std_logic;
+      reset_ld_out               : out std_logic
+      );
 end knncalc;
 
 architecture arq of knncalc is
