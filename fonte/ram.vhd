@@ -69,6 +69,7 @@ ARCHITECTURE SYN OF ram IS
 		outdata_aclr_a		: STRING;
 		outdata_reg_a		: STRING;
 		power_up_uninitialized		: STRING;
+		init_file		: STRING := "data.mif";
 		widthad_a		: NATURAL;
 		width_a		: NATURAL;
 		width_byteena_a		: NATURAL
