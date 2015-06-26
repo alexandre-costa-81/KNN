@@ -2,6 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
+end package example_type;
 
 library altera_mf;
 use altera_mf.altera_mf_components.all;
