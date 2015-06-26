@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
-end package example_type;
+use work.example_type.all;
 
 library altera_mf;
 use altera_mf.altera_mf_components.all;
@@ -12,28 +12,33 @@ entity knncalc is
       -- IN
       clock                      : in  std_logic;
       reset                      : in  std_logic;
+		UART_RXD							: in  std_logic;
+		KEY								: in  std_logic_vector(3 downto 0);
 
       -- OUT
-      --sub_result                  : out std_logic_vector (31 downto 0);
-      add_result                  : out std_logic_vector (31 downto 0);
-      exp_result                  : out std_logic_vector (31 downto 0);
       memory                     : out std_logic_vector (31 downto 0);
       memory_knt                 : out std_logic_vector (31 downto 0);
       memory_result              : out std_logic_vector (31 downto 0);
-      address_knt                : out std_logic_vector (11 downto 0);
-      address_exp                : out std_logic_vector (11 downto 0);
-      address_result             : out std_logic_vector (11 downto 0);
-      state                      : out integer;
-      less_distance_out          : out std_logic_vector (31 downto 0);
-      acc_out                    : out std_logic_vector (31 downto 0);
-      dataa_out                  : out std_logic_vector (31 downto 0);
-      datab_out                  : out std_logic_vector (31 downto 0);
-      pre_add_out                : out std_logic_vector (31 downto 0);
-      control_acc_out            : out std_logic;
-      reset_out                  : out std_logic;
-      sqrt_result                : out std_logic_vector (31 downto 0);
-      control_less_distance_out  : out std_logic;
-      reset_ld_out               : out std_logic;
+		state                      : out integer;
+		UART_TXD							: out std_logic;
+		
+		--sub_result                  : out std_logic_vector (31 downto 0);
+      --add_result                  : out std_logic_vector (31 downto 0);
+      --exp_result                  : out std_logic_vector (31 downto 0);
+      --address_knt                : out std_logic_vector (11 downto 0);
+      --address_exp                : out std_logic_vector (11 downto 0);
+      --address_result             : out std_logic_vector (11 downto 0);
+      
+      --less_distance_out          : out std_logic_vector (31 downto 0);
+      --acc_out                    : out std_logic_vector (31 downto 0);
+      --dataa_out                  : out std_logic_vector (31 downto 0);
+      --datab_out                  : out std_logic_vector (31 downto 0);
+      --pre_add_out                : out std_logic_vector (31 downto 0);
+      --control_acc_out            : out std_logic;
+      --reset_out                  : out std_logic;
+      --sqrt_result                : out std_logic_vector (31 downto 0);
+      --control_less_distance_out  : out std_logic;
+      --reset_ld_out               : out std_logic;
 		end_knn_out						: out std_logic;
 		alb_out						   : out std_logic
       );
@@ -65,6 +70,11 @@ architecture arq of knncalc is
 	signal alb_signal						 : std_logic;
 	signal ld_out							 : std_logic_vector (31 downto 0);
 	signal end_knn                    : std_logic;
+	
+	signal LEDR								 : STD_LOGIC_VECTOR(17 DOWNTO 0);
+	signal LEDG								 : STD_LOGIC_VECTOR(8 DOWNTO 0);
+	signal knt_address					 : integer;
+	signal DATA_OUT 						 : example75f;
 	
 	-- memory
 	-- wren = '0' read only
@@ -171,10 +181,23 @@ architecture arq of knncalc is
 			alb		: OUT STD_LOGIC 
 		);
 	end component;
-	
+
+	component test_receive is
+
+	port(
+		CLOCK_50: in std_logic;
+		UART_TXD: OUT STD_LOGIC;
+		UART_RXD: IN STD_LOGIC;
+		KEY: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+		LEDR: OUT STD_LOGIC_VECTOR(17 DOWNTO 0);
+		LEDG: OUT STD_LOGIC_VECTOR(8 DOWNTO 0);
+		DATA_OUT : OUT example75f
+	);
+	end component;
+
 	begin
+		receiver			: test_receive port map(CLOCK_50 => clock, UART_TXD => UART_TXD, UART_RXD => UART_RXD, KEY => KEY, LEDR => LEDR, LEDG => LEDG, DATA_OUT => DATA_OUT);
 		mem_read			: ram port map(address => mem_exp_control_address, clock => clock, data => control_mem_data, wren => mem_wren_control, q => mem_exp_sub_data);
-		mem_knt			: ram port map(address => mem_knt_control_address, clock => clock, data => data_knt, wren => wren_knt, q => mem_knt_sub_data);
 		sub				: fp_add_sub port map(add_sub => '0', clock => clock, dataa => mem_exp_sub_data, datab => mem_knt_sub_data, result => result_sub);		
 		pre_add			: fp_add_sub port map(add_sub => '1', clock => clock, dataa => "01000001001000000000000000000000", datab => result_sub, result => result_pre_add);
 		exp				: fp_mult port map (clock => clock, dataa => result_pre_add, datab => result_pre_add, result => exp_add);
@@ -187,24 +210,24 @@ architecture arq of knncalc is
 		compare			: fp_compare port map(clock => clock, dataa => sqrt_mem, datab => ld_out, alb => alb_signal);
 		
 		memory							<= mem_exp_sub_data;
-		memory_knt						<= mem_knt_sub_data;
-		address_exp						<= mem_exp_control_address;
-		address_knt						<= mem_knt_control_address;
-		address_result					<= mem_result_control_address;
-		acc_out							<= acc_mem;
-		control_acc_out				<= control_acc;
+		--memory_knt						<= mem_knt_sub_data;
+		--address_exp						<= mem_exp_control_address;
+		--address_knt						<= mem_knt_control_address;
+		--address_result					<= mem_result_control_address;
+		--acc_out							<= acc_mem;
+		--control_acc_out				<= control_acc;
 		--sub_result	 					<= result_sub;
-		add_result						<= add_acc;
-		exp_result						<= exp_add;		
-		dataa_out						<= mem_exp_sub_data;
-		datab_out						<= mem_knt_sub_data;
-		pre_add_out						<= result_pre_add;
-		memory_result					<= mem_result_data;
-		sqrt_result						<= sqrt_mem;
-		reset_out						<= reset_acc;
-		control_less_distance_out	<= control_less_distance;
-		less_distance_out				<= ld_out;
-		reset_ld_out					<= reset_ld;
-		end_knn_out					   <= end_knn;
-		alb_out                    <= alb_signal;
+		--add_result						<= add_acc;
+		--exp_result						<= exp_add;		
+		--dataa_out						<= mem_exp_sub_data;
+		--datab_out						<= mem_knt_sub_data;
+		--pre_add_out						<= result_pre_add;
+		--memory_result					<= mem_result_data;
+		--sqrt_result						<= sqrt_mem;
+		--reset_out						<= reset_acc;
+		--control_less_distance_out	<= control_less_distance;
+		--less_distance_out				<= ld_out;
+		--reset_ld_out					<= reset_ld;
+		--end_knn_out					   <= end_knn;
+		--alb_out                    <= alb_signal;
 end arq;
