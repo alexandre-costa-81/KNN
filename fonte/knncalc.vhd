@@ -12,23 +12,23 @@ entity knncalc is
       -- IN
       clock                      : in  std_logic;
       reset                      : in  std_logic;
-		UART_RXD							: in  std_logic;
-		KEY								: in  std_logic_vector(3 downto 0);
+      UART_RXD                   : in  std_logic;
+      KEY                        : in  std_logic_vector(3 downto 0);
 
       -- OUT
       memory                     : out std_logic_vector (31 downto 0);
       memory_knt                 : out std_logic_vector (31 downto 0);
       memory_result              : out std_logic_vector (31 downto 0);
-		state                      : out integer;
-		UART_TXD							: out std_logic;
-		
-		--sub_result                  : out std_logic_vector (31 downto 0);
+      state                      : out integer;
+      UART_TXD                   : out std_logic;
+
+      --sub_result                  : out std_logic_vector (31 downto 0);
       --add_result                  : out std_logic_vector (31 downto 0);
       --exp_result                  : out std_logic_vector (31 downto 0);
       --address_knt                : out std_logic_vector (11 downto 0);
       --address_exp                : out std_logic_vector (11 downto 0);
       --address_result             : out std_logic_vector (11 downto 0);
-      
+
       --less_distance_out          : out std_logic_vector (31 downto 0);
       --acc_out                    : out std_logic_vector (31 downto 0);
       --dataa_out                  : out std_logic_vector (31 downto 0);
@@ -39,70 +39,70 @@ entity knncalc is
       --sqrt_result                : out std_logic_vector (31 downto 0);
       --control_less_distance_out  : out std_logic;
       --reset_ld_out               : out std_logic;
-		end_knn_out						: out std_logic;
-		alb_out						   : out std_logic
-      );
+      end_knn_out                : out std_logic;
+      alb_out                    : out std_logic
+   );
 end knncalc;
 
 architecture arq of knncalc is
-	signal mem_exp_control_address 	 : std_logic_vector (11 downto 0);
-	signal mem_knt_control_address 	 : std_logic_vector (11 downto 0);
-	signal mem_result_control_address : std_logic_vector (11 downto 0);
-	signal sqrt_mem_result				 : std_logic_vector (31 downto 0);
-	signal exp_add							 : std_logic_vector (31 downto 0);
-	signal acc_mem							 : std_logic_vector (31 downto 0);
-	signal control_mem_data				 : std_logic_vector (31 downto 0);
-	signal add_acc							 : std_logic_vector (31 downto 0);
-	signal data_knt						 : std_logic_vector (31 downto 0);
-	signal mem_knt_sub_data				 : std_logic_vector (31 downto 0);
-	signal mem_exp_sub_data				 : std_logic_vector (31 downto 0);
-	signal result_sub						 : std_logic_vector (31 downto 0);
-	signal result_pre_add			    : std_logic_vector (31 downto 0);
-	signal sqrt_mem						 : std_logic_vector (31 downto 0);
-	signal mem_result_data				 : std_logic_vector (31 downto 0);
-	signal control_acc					 : std_logic;
-	signal mem_wren_control				 : std_logic;
-	signal wren_knt						 : std_logic;
-	signal wren_result					 : std_logic;
-	signal reset_acc						 : std_logic;
-	signal control_less_distance      : std_logic;
-	signal reset_ld						 : std_logic;
-	signal alb_signal						 : std_logic;
-	signal ld_out							 : std_logic_vector (31 downto 0);
-	signal end_knn                    : std_logic;
-	
-	signal LEDR								 : STD_LOGIC_VECTOR(17 DOWNTO 0);
-	signal LEDG								 : STD_LOGIC_VECTOR(8 DOWNTO 0);
-	signal knt_address					 : integer;
-	signal DATA_OUT 						 : example75f;
-	
-	-- memory
-	-- wren = '0' read only
-	-- wren = '1' write only
-	component ram is
-		port (
-			address	: in 	std_logic_vector (11 downto 0);
-			clock		: in 	std_logic ;
-			data		: in 	std_logic_vector (31 downto 0);
-			wren		: in	std_logic ;
-			q			: out std_logic_vector (31 downto 0)
-		);
-	end component;
+   signal mem_exp_control_address    : std_logic_vector (11 downto 0);
+   signal mem_knt_control_address    : integer;
+   signal mem_result_control_address : std_logic_vector (11 downto 0);
+   signal sqrt_mem_result            : std_logic_vector (31 downto 0);
+   signal exp_add                    : std_logic_vector (31 downto 0);
+   signal acc_mem                    : std_logic_vector (31 downto 0);
+   signal control_mem_data           : std_logic_vector (31 downto 0);
+   signal add_acc                    : std_logic_vector (31 downto 0);
+   signal data_knt                   : std_logic_vector (31 downto 0);
+   signal mem_knt_sub_data           : std_logic_vector (31 downto 0);
+   signal mem_exp_sub_data           : std_logic_vector (31 downto 0);
+   signal result_sub                 : std_logic_vector (31 downto 0);
+   signal result_pre_add             : std_logic_vector (31 downto 0);
+   signal sqrt_mem                   : std_logic_vector (31 downto 0);
+   signal mem_result_data            : std_logic_vector (31 downto 0);
+   signal control_acc                : std_logic;
+   signal mem_wren_control           : std_logic;
+   signal wren_knt                   : std_logic;
+   signal wren_result                : std_logic;
+   signal reset_acc                  : std_logic;
+   signal control_less_distance      : std_logic;
+   signal reset_ld                   : std_logic;
+   signal alb_signal                 : std_logic;
+   signal ld_out                     : std_logic_vector (31 downto 0);
+   signal end_knn                    : std_logic;
 
-	-- mux 2x1
-	component mux is
-		port (
-			sel: in	std_logic;
-			i0	: in	std_logic_vector (31 downto 0);
-			i1	: in	std_logic_vector (31 downto 0);
-			o	: out	std_logic_vector (31 downto 0)
-		);
-	end component;
-	
-	-- adder and subtrator
-	component fp_add_sub is
-		port (
-			add_sub	: in 	std_logic;
+   signal LEDR                       : STD_LOGIC_VECTOR(17 DOWNTO 0);
+   signal LEDG                       : STD_LOGIC_VECTOR(8 DOWNTO 0);
+   signal knt_address                : integer;
+   signal DATA_OUT                   : example75f;
+
+   -- memory
+   -- wren = '0' read only
+   -- wren = '1' write only
+   component ram is
+      port (
+         address  : in  std_logic_vector (11 downto 0);
+         clock    : in  std_logic ;
+         data     : in  std_logic_vector (31 downto 0);
+         wren     : in  std_logic ;
+         q        : out std_logic_vector (31 downto 0)
+      );
+   end component;
+
+   -- mux 2x1
+   component mux is
+      port (
+         sel: in  std_logic;
+         i0 : in  std_logic_vector (31 downto 0);
+         i1 : in  std_logic_vector (31 downto 0);
+         o  : out std_logic_vector (31 downto 0)
+      );
+   end component;
+
+   -- adder and subtrator
+   component fp_add_sub is
+      port (
+         add_sub	: in 	std_logic;
 			clock		: in 	std_logic;
 			dataa		: in 	std_logic_vector (31 downto 0);
 			datab		: in 	std_logic_vector (31 downto 0);
@@ -129,7 +129,7 @@ architecture arq of knncalc is
 
 			-- OUT
 			address_exp				: out std_logic_vector (11 downto 0);
-			address_knt				: out std_logic_vector (11 downto 0);
+			address_knt				: out integer;
 			address_result			: out std_logic_vector (11 downto 0);
 			data						: out std_logic_vector (31 downto 0);
 			wren						: out std_logic;
@@ -198,7 +198,7 @@ architecture arq of knncalc is
 	begin
 		receiver			: test_receive port map(CLOCK_50 => clock, UART_TXD => UART_TXD, UART_RXD => UART_RXD, KEY => KEY, LEDR => LEDR, LEDG => LEDG, DATA_OUT => DATA_OUT);
 		mem_read			: ram port map(address => mem_exp_control_address, clock => clock, data => control_mem_data, wren => mem_wren_control, q => mem_exp_sub_data);
-		sub				: fp_add_sub port map(add_sub => '0', clock => clock, dataa => mem_exp_sub_data, datab => mem_knt_sub_data, result => result_sub);		
+		sub				: fp_add_sub port map(add_sub => '0', clock => clock, dataa => mem_exp_sub_data, datab => DATA_OUT(mem_knt_control_address), result => result_sub);		
 		pre_add			: fp_add_sub port map(add_sub => '1', clock => clock, dataa => "01000001001000000000000000000000", datab => result_sub, result => result_pre_add);
 		exp				: fp_mult port map (clock => clock, dataa => result_pre_add, datab => result_pre_add, result => exp_add);
 		add				: fp_add_sub port map(add_sub => '1', clock => clock, dataa => exp_add, datab => acc_mem, result => add_acc);
