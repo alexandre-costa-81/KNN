@@ -1,33 +1,33 @@
 from sys import argv
 from binary import *
 
+input_files = []
 
-source, input_file_name = argv
+for i in range(1, len(argv)):
+	input_files.append(open(argv[i], 'r'))
 
-print 'argumentos : ', argv[1]
+input_file_array = []
 
-print "Opening the file..."
-input_file = open(input_file_name, 'r')
+print "---------------------------"
+print "  Creating mif file from:  "
+for i in range(1, len(argv)):
+	print "    " + argv[i]
 
-print "To array..."
-input_file_array = input_file.read().replace('\n', ',').split(',')
+for i in range(len(input_files)):
+	input_file_array = input_file_array + (input_files[i].read().replace('\n', ',').replace('\r', '').split(','))
 
 # sigle is IEEE 754 32 bit float format
 context = single
 
 output_array = []
 
-print "To binary..."
+print " "
+print "  To binary..."
 for i in range(len(input_file_array)):
-	#x = context(Decimal("-0.9375"))
 	if (input_file_array[i] != ''):
 		x = context(Decimal(input_file_array[i]))
-		#print x.replace(' ', '')
 		output_array.append(x)
 
-#print output_array
-
-print "Adding to file..."
 output_file_name = "output.mif"
 output_file = open(output_file_name, 'w')
 
@@ -35,12 +35,12 @@ output_file = open(output_file_name, 'w')
 content = "WIDTH=16;\nDEPTH=16384;\n\nADDRESS_RADIX=DEC;\nDATA_RADIX=BIN;\n\nCONTENT BEGIN\n"
 
 for i in range(len(output_array)):
-	#print "array[" + str(i) + "] = " + str(input_file_array[i])
-	#content += "array[" + str(i) + "] = " + str(input_file_array[i])
 	content += "	" + str(i) + "  :  " + str(output_array[i]).replace(" ", "") + ";\n"
 
 content += "END;"
 output_file.write(content)
 
-print "Saving file..."
+print "  Saving file..."
 output_file.close()
+print "  Done"
+print "---------------------------"
