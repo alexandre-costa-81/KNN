@@ -124,39 +124,63 @@ fazer o timing com unidades externas, como memória RAM, etc.
 
 \section{Processo de implementação do algoritmo KNN em VHDL}
 
-O algoritmo usado na implementação VHDL foi o KNN usando a distancia euclidiana. Esta é a distância entre dois pontos, 
+O algoritmo usado na implementação VHDL foi o KNN pela distancia euclidiana. Esta é a distância entre dois pontos, 
 que pode ser provada pela aplicação repetida do teorema de Pitágoras (wikipedia). A distancia euclidiana entre o ponto 
-P() e Q() é dada por:
-FORMULA DA DISTANCIA EUCLIDIANA
-Foi assumido K igual a um, para facilitar a implementação em VHDL. K igual a um significa…
+P($p_1, p_2, p_3, ..., p_n$) e Q($q_1, q_2, q_3, ..., q_n$) é dada por:
+
+$d(p, q) = \sqrt{\sum\limits_{i=1}^n (q_i - p_i)^2}$
+
+Para facilitar a implementação em VHDL, foi considerado K igual a um. 
+
 Os pontos recebidos pela parte de aquisição de dados vem no padrão IEEE 754. O padrão 754 define regras de operação e 
 representação sobre números binários em ponto flutuante. Para que o número esteja normalizado deve estar no formato da 
-figura 
-FIGURA DA REPRESENTAÇÃO DE PONTO FLUTUANTE
-Os exemplos deve estar de tal fora....
-O exemplo vindo do Kinect é tratado de tal forma…
+Figura \ref{fig:ieee754ps}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{img/IEEE_754_Single_Floating_Point_Format}
+\caption{Distribuição dos bits. Precisão simples \cite{wiki:ieee754en}}
+\label{fig:ieee754ps}
+\end{figure}
+
+A precisão de representação numérica utilizada neste trabalho foi a precisão simple. Onde possui 32 bits 
+que em representação seriam 7 digitos decimais. Destes 32 bits 1 bit é para o sinal, 8 bits para o expoente
+e 23 bits para representar a mantissa.
 
 \subsection{Descrição dos sinais das entradas e saídas}
 
-CLOCK: é um pino de entrada para prover o sincronismo entre as operações aritimeticas.
-RESET: é um pino de entrada que reinicia o processo de calculo do KNN. Quando esta em 0 os registradores são reiniciados 
-e a maquina de estados vai para o estado inicial.
-CONTROL_LESS_DISTANCE_OUT: é um pino de saída que sinaliza quando terminou o calculo do KNN.
+\begin{itemize}
+\item CLOCK: é um pino de entrada para prover o sincronismo entre as operações aritimeticas.
+
+\item RESET: é um pino de entrada que reinicia o processo de calculo do KNN. Quando esta em 0 os 
+registradores são reiniciados e a maquina de estados vai para o estado inicial.
+
+\item CONTROL\_LESS\_DISTANCE\_OUT: é um pino de saída que sinaliza quando terminou o calculo do KNN.
+\end{itemize}
 
 \subsection{Descrição do bloco operativo}
 
+O bloco operativo é dividito basicamente em 2 loops, onde o primeiro loop vai acumular os valores
 O bloco operativo é composto por um subtrator, um multiplicador, 2 somadores, um acumulador...
+
+
 
 \subsection{Descrição do bloco de controle}
 
-O bloco de controle é composto por 13 estados chamados de INITIAL, LOAD_MEMORY, LOAD_MEMORY_IT, ACCUMULATE_RESET, 
-ACCUMULATE, ACCUMULATE_IT, SQRT, SQRT_IT, ACCUMULATE_LOAD, MEM_RESULT_LOAD, MEM_RESULT_LOAD_IT, ITERATE e FINAL. Cada 
-estado tem a seguinte funcionalidade:
-INICIAL: responsável por inicializar…
-ACCUMULATE e ACCUMULATE_IT: responsável por acumular todos os resultados das operações
-SQRT e SQRT_IT: responsável por realizar o calculo da raiz quadrada dos resultados
-ACCUMULATE_LOAD:
-MEM_RESULT_LOAD e MEM_RESULT_LOAD_IT:
+O bloco de controle é composto por 13 estados chamados de INITIAL, LOAD\_MEMORY, LOAD\_MEMORY\_IT, ACCUMULATE\_RESET, 
+ACCUMULATE, ACCUMULATE\_IT, SQRT, SQRT\_IT, ACCUMULATE\_LOAD, MEM\_RESULT\_LOAD, MEM\_RESULT\_LOAD\_IT, ITERATE e FINAL.
+
+Cada estado tem a seguinte funcionalidade:
+
+\begin{itemize}
+
+\item INICIAL: responsável por inicializar…
+\item ACCUMULATE e ACCUMULATE\_IT: responsável por acumular todos os resultados das operações
+\item SQRT e SQRT\_IT: responsável por realizar o calculo da raiz quadrada dos resultados
+\item ACCUMULATE\_LOAD:
+\item MEM\_RESULT\_LOAD e MEM\_RESULT\_LOAD\_IT:
+
+\end{itemize}
 
 
 \section{Conclus\~ao}\label{sec:figs}
