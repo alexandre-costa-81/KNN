@@ -21,6 +21,7 @@ entity knncalc is
       memory_result              : out std_logic_vector (31 downto 0);
       state                      : out integer;
       UART_TXD                   : out std_logic;
+		address_final_out				: out std_logic_vector (11 downto 0);
 		
 		-- LCD
 		LEDS_ON : OUT STD_LOGIC_VECTOR (7 downto 0);		
@@ -80,7 +81,10 @@ architecture arq of knncalc is
    signal LEDG                       : STD_LOGIC_VECTOR(8 DOWNTO 0);
    signal knt_address                : integer;
    signal DATA_OUT                   : example75f;
-
+	signal receive_state_signal		 : integer;
+	signal reset_from_control         : std_logic;
+	signal address_final					 : STD_LOGIC_VECTOR(11 DOWNTO 0);
+	
    -- memory
    -- wren = '0' read only
    -- wren = '1' write only
@@ -128,9 +132,10 @@ architecture arq of knncalc is
    component control_unit is
       port(
          -- IN
-         clock                : in  std_logic;
-         reset                : in  std_logic;
-         alb                  : in  std_logic;
+         clock                : in std_logic;
+         reset                : in std_logic;
+         alb                  : in std_logic;
+			receive_state			: in integer;
 
          -- OUT
          address_exp          : out std_logic_vector (11 downto 0);
@@ -146,7 +151,8 @@ architecture arq of knncalc is
          reset_acc            : out std_logic;
          control_less_distance: out std_logic;
          reset_ld_out         : out std_logic;
-         end_knn              : out std_logic
+         end_knn              : out std_logic;
+			reset_from_control	: out std_logic
       );
    end component;
 
@@ -190,15 +196,17 @@ architecture arq of knncalc is
    end component;
 
    component test_receive is
-   port(
-      CLOCK_50: in std_logic;
-      UART_TXD: OUT STD_LOGIC;
-      UART_RXD: IN STD_LOGIC;
-      KEY: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-      LEDR: OUT STD_LOGIC_VECTOR(17 DOWNTO 0);
-      LEDG: OUT STD_LOGIC_VECTOR(8 DOWNTO 0);
-      DATA_OUT : OUT example75f
-   );
+		port(
+			CLOCK_50: in std_logic;
+			UART_TXD: OUT STD_LOGIC;
+			UART_RXD: IN STD_LOGIC;
+			KEY: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+			LEDR: OUT STD_LOGIC_VECTOR(17 DOWNTO 0);
+			LEDG: OUT STD_LOGIC_VECTOR(8 DOWNTO 0);
+			DATA_OUT : OUT example75f;
+			receive_state: out integer;
+			reset:   in std_logic
+		);
    end component;
 	
 	component controladorLCD IS
@@ -212,7 +220,7 @@ architecture arq of knncalc is
 	END component;
 
    begin
-      receiver       : test_receive port map(CLOCK_50 => clock, UART_TXD => UART_TXD, UART_RXD => UART_RXD, KEY => KEY, LEDR => LEDR, LEDG => LEDG, DATA_OUT => DATA_OUT);
+      receiver       : test_receive port map(reset => reset_from_control, receive_state => receive_state_signal, CLOCK_50 => clock, UART_TXD => UART_TXD, UART_RXD => UART_RXD, KEY => KEY, LEDR => LEDR, LEDG => LEDG, DATA_OUT => DATA_OUT);
       mem_read       : ram port map(address => mem_exp_control_address, clock => clock, data => control_mem_data, wren => mem_wren_control, q => mem_exp_sub_data);
       sub            : fp_add_sub port map(add_sub => '0', clock => clock, dataa => mem_exp_sub_data, datab => DATA_OUT(mem_knt_control_address), result => result_sub);		
       pre_add        : fp_add_sub port map(add_sub => '1', clock => clock, dataa => "01000001001000000000000000000000", datab => result_sub, result => result_pre_add);
@@ -220,11 +228,11 @@ architecture arq of knncalc is
       add            : fp_add_sub port map(add_sub => '1', clock => clock, dataa => exp_add, datab => acc_mem, result => add_acc);
       acc            : reg_acc port map(load => control_acc, d => add_acc, q => acc_mem, reset => reset_acc);
       sqrt           : fp_sqrt port map(clock => clock, data => acc_mem, result => sqrt_mem);
-      control        : control_unit port map(end_knn => end_knn, alb => alb_signal, control_less_distance => control_less_distance, control_acc => control_acc, wren_knt => wren_knt, data_knt => data_knt, st => state, clock => clock, reset => reset, address_exp => mem_exp_control_address, address_knt => mem_knt_control_address, data => control_mem_data, wren => mem_wren_control, address_result => mem_result_control_address, wren_result => wren_result, reset_acc => reset_acc, reset_ld_out => reset_ld);
+      control        : control_unit port map(reset_from_control => reset_from_control, receive_state => receive_state_signal, end_knn => end_knn, alb => alb_signal, control_less_distance => control_less_distance, control_acc => control_acc, wren_knt => wren_knt, data_knt => data_knt, st => state, clock => clock, reset => reset, address_exp => mem_exp_control_address, address_knt => mem_knt_control_address, data => control_mem_data, wren => mem_wren_control, address_result => mem_result_control_address, wren_result => wren_result, reset_acc => reset_acc, reset_ld_out => reset_ld);
       --mem_result      : ram  port map(address => mem_result_control_address, clock => clock, data => sqrt_mem, wren => wren_result, q => mem_result_data);
-      less_distance  : reg port map(load => control_less_distance, e => mem_exp_control_address, d => sqrt_mem, q => ld_out, reset => reset_ld);		
+      less_distance  : reg port map(load => control_less_distance, e => mem_exp_control_address, e_out => address_final, d => sqrt_mem, q => ld_out, reset => reset_ld);		
       compare        : fp_compare port map(clock => clock, dataa => sqrt_mem, datab => ld_out, alb => alb_signal);
-		LCD 				: controladorLCD port map (mem_exp_control_address => mem_exp_control_address, reset => reset, clk_50Mhz => clock, LCD_RS => LCD_RS, LCD_E => LCD_E, LCD_ON => LCD_ON, RESET_LED => RESET_LED, LCD_RW => LCD_RW, DATA_BUS => DATA_BUS);
+		LCD 				: controladorLCD port map (mem_exp_control_address => address_final, reset => reset, clk_50Mhz => clock, LCD_RS => LCD_RS, LCD_E => LCD_E, LCD_ON => LCD_ON, RESET_LED => RESET_LED, LCD_RW => LCD_RW, DATA_BUS => DATA_BUS);
 		
       memory                     <= mem_exp_sub_data;
       --memory_knt                  <= mem_knt_sub_data;
@@ -247,4 +255,5 @@ architecture arq of knncalc is
       --reset_ld_out                <= reset_ld;
       --end_knn_out                 <= end_knn;
       --alb_out                     <= alb_signal;
+		address_final_out <= address_final;
 end arq;

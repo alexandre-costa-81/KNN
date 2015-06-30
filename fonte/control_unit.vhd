@@ -7,9 +7,10 @@ use IEEE.numeric_std.all;
 entity control_unit is
    port(
       -- IN
-      clock                   : in 	std_logic;
-      reset                   : in 	std_logic;
-      alb                     : in 	std_logic;
+      clock                   : in std_logic;
+      reset                   : in std_logic;
+      alb                     : in std_logic;
+		receive_state				: in integer;
 
       -- OUT
       address_exp             : out std_logic_vector (11 downto 0);
@@ -25,7 +26,8 @@ entity control_unit is
       reset_acc               : out std_logic;
       control_less_distance   : out std_logic;
       reset_ld_out            : out std_logic;
-      end_knn                 : out std_logic
+      end_knn                 : out std_logic;
+		reset_from_control      : out std_logic
    );
 end control_unit;
 
@@ -56,6 +58,7 @@ signal mod_accumulate_tmp        : integer;
 signal result_accumulate_tmp     : integer;
 signal less_distance_tmp         : integer;
 signal comp_ok                   : std_logic;
+signal reset_from_control_tmp    : std_logic;
 
 begin
    process (reset, clock)
@@ -96,10 +99,16 @@ begin
             wren_result_tmp            := '0';
             reset_acc                  <= '1';
             reset_ld                   <= '1';
-            st                         <= 0;
+            st                         <=  0;
             sqrt_calculing             <= '0';
-            next_state                 <= load_memory;
-
+				reset_from_control_tmp     <= '0';
+				
+				if (receive_state = 2) then
+					next_state              <= load_memory;
+				else
+					next_state					<= initial;
+				end if;
+				
          when load_memory =>
             counter_clock              <= '1';
             reset_acc                  <= '0';
@@ -114,6 +123,7 @@ begin
             wren_result_tmp            := '0';
             sqrt_calculing             <= '0';
             wren_tmp                   := '0';
+				reset_from_control_tmp     <= '0';
             st                         <= 1;
          if (end_loop = '0') then
             next_state <= load_memory_it;
@@ -135,6 +145,7 @@ begin
             wren_knt_tmp               := '0';
             wren_result_tmp            := '0';
             sqrt_calculing             <= '0';
+				reset_from_control_tmp     <= '0';
             st                         <= 2;
             next_state                 <= load_memory;
 
@@ -152,6 +163,7 @@ begin
             counter_accumulate_clear   <= '1';
             wren_result_tmp            := '0';
             sqrt_calculing             <= '0';
+				reset_from_control_tmp     <= '0';
             st                         <= 3;
             next_state                 <= accumulate_it;
 
@@ -169,6 +181,7 @@ begin
             control_less_distance_tmp  <= '0';
             counter_accumulate_clear   <= '0';
             sqrt_calculing             <= '0';
+				reset_from_control_tmp     <= '0';
             st                         <= 4;
             if (control_acc_tmp = '0') then
                next_state <= accumulate_it;
@@ -190,6 +203,7 @@ begin
             counter_accumulate_clear   <= '0';
             wren_result_tmp            := '0';
             sqrt_calculing             <= '0';
+				reset_from_control_tmp     <= '0';
             st                         <= 5;
             next_state                 <= accumulate;
 
@@ -206,6 +220,7 @@ begin
             counter_clock              <= '0';
             control_less_distance_tmp  <= '0';
             counter_memory_clear       <= '0';
+				reset_from_control_tmp     <= '0';
             counter_accumulate_clear   <= '0';
             st                         <= 6;
 
@@ -229,6 +244,7 @@ begin
             control_less_distance_tmp  <= '0';
             wren_result_tmp            := '0';
             counter_accumulate_clear   <= '0';
+				reset_from_control_tmp     <= '0';
             st                         <= 7;
 
             if (sqrt_ok = '0') then
@@ -249,6 +265,7 @@ begin
             wren_result_tmp            := '0';
             control_less_distance_tmp  <= '0';
             sqrt_calculing             <= '1';
+				reset_from_control_tmp     <= '0';
             counter_clock              <= '0';
             counter_memory_clear       <= '0';
             counter_accumulate_clear   <= '0';
@@ -263,6 +280,7 @@ begin
             wren_result_tmp            := '1';
             sqrt_calculing             <= '1';
             reset_acc                  <= '0';
+				reset_from_control_tmp     <= '0';
             reset_ld                   <= '0';
             counter_clock              <= '1';
             st                         <= 99;
@@ -287,6 +305,7 @@ begin
             address_result_tmp      := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
             wren_result_tmp         := '1';
             sqrt_calculing          <= '1';
+				reset_from_control_tmp  <= '0';
             reset_acc               <= '0';
             reset_ld                <= '0';
             counter_clock           <= '0';
@@ -309,6 +328,7 @@ begin
             sqrt_calculing             <= '0';
             control_less_distance_tmp  <= '0';
             reset_acc                  <= '1';
+				reset_from_control_tmp     <= '0';
             reset_ld                   <= '0';
             st                         <= 11;
             counter_accumulate_clear   <= '0';
@@ -329,6 +349,7 @@ begin
             control_less_distance_tmp  <= '0';
             wren_result_tmp            := '0';
             reset_ld                   <= '0';
+				reset_from_control_tmp     <= '1';
             counter_memory_clear       <= '0';
             counter_accumulate_clear   <= '0';
             counter_clock              <= '0';
@@ -336,17 +357,18 @@ begin
             next_state                 <= final;
       end case;
 
-      address_knt          <= address_knt_tmp;
-      address_exp          <= address_exp_tmp;
-      data                 <= data_tmp;
-      data_knt             <= data_knt_tmp;
-      wren                 <= wren_tmp;
-      wren_knt             <= wren_knt_tmp;
-      control_acc          <= control_acc_tmp;
-      wren_result          <= wren_result_tmp;
-      address_result       <= address_result_tmp;
-      control_less_distance<= control_less_distance_tmp;
-      reset_ld_out         <= reset_ld;
+      address_knt            <= address_knt_tmp;
+      address_exp            <= address_exp_tmp;
+      data                   <= data_tmp;
+      data_knt               <= data_knt_tmp;
+      wren                   <= wren_tmp;
+      wren_knt               <= wren_knt_tmp;
+      control_acc            <= control_acc_tmp;
+      wren_result            <= wren_result_tmp;
+      address_result         <= address_result_tmp;
+      control_less_distance  <= control_less_distance_tmp;
+      reset_ld_out           <= reset_ld;
+		reset_from_control     <= reset_from_control_tmp;
    end process;
 
    -- LOOP -> Counter of memory management
@@ -390,7 +412,7 @@ begin
          example_ok                    <= '0';
          mod_aux                       := 0;
          control_acc_aux               := '0';
-         number_of_data_columns        := 10200;
+         number_of_data_columns        := 10050;
          number_of_data_knt_columns    := 75;
          number_of_clocks              := 30;
          sqrt_clocks                   := 15;
