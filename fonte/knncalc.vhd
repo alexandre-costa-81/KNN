@@ -21,6 +21,12 @@ entity knncalc is
       memory_result              : out std_logic_vector (31 downto 0);
       state                      : out integer;
       UART_TXD                   : out std_logic;
+		
+		-- LCD
+		LEDS_ON : OUT STD_LOGIC_VECTOR (7 downto 0);		
+		LCD_RS, LCD_E, LCD_ON, RESET_LED: OUT  STD_LOGIC;
+		LCD_RW: BUFFER STD_LOGIC;
+		DATA_BUS: INOUT STD_LOGIC_VECTOR(7 DOWNTO 0);
 
       --sub_result                  : out std_logic_vector (31 downto 0);
       --add_result                  : out std_logic_vector (31 downto 0);
@@ -70,7 +76,6 @@ architecture arq of knncalc is
    signal alb_signal                 : std_logic;
    signal ld_out                     : std_logic_vector (31 downto 0);
    signal end_knn                    : std_logic;
-
    signal LEDR                       : STD_LOGIC_VECTOR(17 DOWNTO 0);
    signal LEDG                       : STD_LOGIC_VECTOR(8 DOWNTO 0);
    signal knt_address                : integer;
@@ -150,7 +155,9 @@ architecture arq of knncalc is
          load  : in  std_logic;
          reset : in  std_logic;
          d     : in  std_logic_vector(31 downto 0);
-         q     : out std_logic_vector(31 downto 0)
+			e  	: in std_logic_vector(11 downto 0);
+         q     : out std_logic_vector(31 downto 0);
+			e_out	: out std_logic_vector(11 downto 0)
       );
    end component;
 
@@ -193,6 +200,16 @@ architecture arq of knncalc is
       DATA_OUT : OUT example75f
    );
    end component;
+	
+	component controladorLCD IS
+		PORT(
+			reset, clk_50Mhz: IN STD_LOGIC;
+			LCD_RS, LCD_E, LCD_ON, RESET_LED: OUT  STD_LOGIC;
+			LCD_RW: BUFFER STD_LOGIC;
+			DATA_BUS: INOUT STD_LOGIC_VECTOR(7 DOWNTO 0);	
+			mem_exp_control_address: in STD_LOGIC_VECTOR(11 DOWNTO 0)
+	);
+	END component;
 
    begin
       receiver       : test_receive port map(CLOCK_50 => clock, UART_TXD => UART_TXD, UART_RXD => UART_RXD, KEY => KEY, LEDR => LEDR, LEDG => LEDG, DATA_OUT => DATA_OUT);
@@ -205,9 +222,10 @@ architecture arq of knncalc is
       sqrt           : fp_sqrt port map(clock => clock, data => acc_mem, result => sqrt_mem);
       control        : control_unit port map(end_knn => end_knn, alb => alb_signal, control_less_distance => control_less_distance, control_acc => control_acc, wren_knt => wren_knt, data_knt => data_knt, st => state, clock => clock, reset => reset, address_exp => mem_exp_control_address, address_knt => mem_knt_control_address, data => control_mem_data, wren => mem_wren_control, address_result => mem_result_control_address, wren_result => wren_result, reset_acc => reset_acc, reset_ld_out => reset_ld);
       --mem_result      : ram  port map(address => mem_result_control_address, clock => clock, data => sqrt_mem, wren => wren_result, q => mem_result_data);
-      less_distance  : reg port map(load => control_less_distance, d => sqrt_mem, q => ld_out, reset => reset_ld);
+      less_distance  : reg port map(load => control_less_distance, e => mem_exp_control_address, d => sqrt_mem, q => ld_out, reset => reset_ld);		
       compare        : fp_compare port map(clock => clock, dataa => sqrt_mem, datab => ld_out, alb => alb_signal);
-
+		LCD 				: controladorLCD port map (mem_exp_control_address => mem_exp_control_address, reset => reset, clk_50Mhz => clock, LCD_RS => LCD_RS, LCD_E => LCD_E, LCD_ON => LCD_ON, RESET_LED => RESET_LED, LCD_RW => LCD_RW, DATA_BUS => DATA_BUS);
+		
       memory                     <= mem_exp_sub_data;
       --memory_knt                  <= mem_knt_sub_data;
       --address_exp                 <= mem_exp_control_address;

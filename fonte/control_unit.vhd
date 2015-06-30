@@ -106,7 +106,7 @@ begin
             counter_memory_clear       <= '0';
             control_less_distance_tmp  <= '0';
             reset_ld                   <= '0';
-            --address_knt_tmp            := std_logic_vector(to_unsigned(aux_tmp, address_knt_tmp'length));
+            --address_knt_tmp          := std_logic_vector(to_unsigned(aux_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_tmp, address_exp_tmp'length));
             address_result_tmp         := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
@@ -122,7 +122,7 @@ begin
          end if;
 
          when load_memory_it =>
-            --address_knt_tmp            := std_logic_vector(to_unsigned(aux_tmp, address_knt_tmp'length));
+            --address_knt_tmp          := std_logic_vector(to_unsigned(aux_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_tmp, address_exp_tmp'length));
             address_result_tmp         := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
@@ -139,7 +139,7 @@ begin
             next_state                 <= load_memory;
 
          when accumulate_reset =>
-            --address_knt_tmp         := "000000000000";
+            --address_knt_tmp          := "000000000000";
             address_knt_tmp            := 0;
             address_exp_tmp            := "000000000000";
             address_result_tmp         := std_logic_vector(to_unsigned(result_accumulate_tmp, address_result_tmp'length));
@@ -390,8 +390,8 @@ begin
          example_ok                    <= '0';
          mod_aux                       := 0;
          control_acc_aux               := '0';
-         number_of_data_columns        := 18;
-         number_of_data_knt_columns    := 6;
+         number_of_data_columns        := 10200;
+         number_of_data_knt_columns    := 75;
          number_of_clocks              := 30;
          sqrt_clocks                   := 15;
          sqrt_ok                       <= '0';
@@ -422,7 +422,7 @@ begin
                   end_accumulate_loop <= '1';
                end if;
             end if;
-         else 
+         else					
             control_acc_aux := '0';
             if (sqrt_counter < sqrt_clocks) then
                sqrt_counter := sqrt_counter + 1;
