@@ -161,7 +161,14 @@ registradores são reiniciados e a maquina de estados vai para o estado inicial.
 \subsection{Descrição do bloco operativo}
 
 O bloco operativo é dividito basicamente em 2 loops, onde o primeiro loop vai acumular os valores
-O bloco operativo é composto por um subtrator, um multiplicador, 2 somadores, um acumulador...
+e o segundo loop serve apenas para estabilizar o calculo da raiz quadrada. Quando este processo
+fica pronto o valor é comparado e armazenado em um registrador.
+
+Para implementar este processo foram usados uma memória, um subtrator, um multiplicador, dois 
+somadores, um acumulador, um bloco que calcula a raiz quadrada e um registrador.
+Na implementação das operações e da memória foram utilizadas as megafunctions para ponto flutuante
+do Quartus II. 
+
 
 
 
