@@ -32,7 +32,7 @@ output_file_name = "output.mif"
 output_file = open(output_file_name, 'w')
 
 # HEADER
-content = "WIDTH=16;\nDEPTH=16384;\n\nADDRESS_RADIX=DEC;\nDATA_RADIX=BIN;\n\nCONTENT BEGIN\n"
+content = "WIDTH=32;\nDEPTH=16384;\n\nADDRESS_RADIX=DEC;\nDATA_RADIX=BIN;\n\nCONTENT BEGIN\n"
 
 for i in range(len(output_array)):
 	content += "	" + str(i) + "  :  " + str(output_array[i]).replace(" ", "") + ";\n"
