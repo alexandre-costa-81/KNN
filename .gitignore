@@ -13,6 +13,7 @@
 !*.py
 !*.pdf
 !*.vhdl
+!*.zip
 # etc...
 
 # ...even if they are in subdirectories
