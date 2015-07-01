@@ -11,6 +11,7 @@
 !*.png
 !*.csv
 !*.py
+!*.pdf
 # etc...
 
 # ...even if they are in subdirectories
