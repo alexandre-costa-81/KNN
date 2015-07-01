@@ -31,12 +31,47 @@
 	\begin{itemize}
 	\item Realizar um estudo sobre a aplicação do algoritmo KNN em FPGAs;
 	\item Reconhecimento de indivíduos a partir dos movimentos e dados
-	antropométricos \cite{granaidentificaccao};
+	antropométricos;
 	\item Foi realizado uma conexão entre o Kinect, a placa Altera Cyclone
 	(2C35) e o computador para coleta em tempo real dos dados;
-	\item Construido um ambiente experimental simulado. 
+	\item Construindo um ambiente experimental simulado. 
 	\end{itemize}
 \end{frame}
+
+\begin{frame}{Kinect Versão 2}
+
+\begin{itemize}
+	\item O Kinect é equipado com uma câmera RGB-D sensível à profundidade.
+	\item O processador de imagens do SDK do Kinect usa as imagens RGB-D para
+	calcular as posições das articulações da pessoa.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Kinect Versão 2}
+
+\begin{itemize}
+	\item Cada articulação do mapa de profundidade representa um ponto em uma
+	caixa 3D, naquela coordenada (x, y, z) em particular;
+	\item Se o valor da articulação é (0, 0, 0), isso indica essa articulação
+	está no ponto central dessa caixa 3D.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Algoritmo KNN}
+
+\begin{itemize}
+	\item O algoritmo K-NN é utilizado para classificar um objeto não rotulado,
+	baseado no rótulo de seus vizinhos mais próximos;
+	\item Essa proximidade é baseada em uma métrica de distância entre dois
+	pontos (distância Euclidiana);
+	\item A regra de classificação do k-NN é associar a uma amostra de teste, o
+	rótulo da maioria das categorias de seus “k” vizinhos mais próximos;
+\end{itemize}
+
+\end{frame}
+
 
 \section{Processo de implementação do algoritmo KNN em VHDL}
 
@@ -132,16 +167,9 @@
 \begin{frame}{Resultados}
 
 \begin{itemize}
-	\item Resultados
+	\item O algoritmo M5Rules atingiu 99\% de acerto rodando no Weka;
+	\item O KNN chegou a 99\% de acerto na placa.
 \end{itemize}
-
-\end{frame}
-
-\section{Referências}
-\begin{frame}{Referências}
-  
-	\bibliography{ref}{}
-	\bibliographystyle{plain}
 
 \end{frame}
 
