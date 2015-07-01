@@ -3,6 +3,8 @@
 \usepackage{sbc-template}
 
 \usepackage{graphicx,url}
+%\usepackage{subcaption}
+\usepackage{subfigure}
 
 \usepackage[brazil]{babel}
 \usepackage[utf8]{inputenc}  
@@ -26,9 +28,9 @@
 
 \maketitle
 
-\begin{abstract}
-  This paper describes ...
-\end{abstract}
+%\begin{abstract}
+%  This paper describes ...
+%\end{abstract}
      
 \begin{resumo}
 
@@ -113,12 +115,13 @@ $d(x_{n}', x) = min(x_i, x) i = 1, 2, ...,n$
 A distância mínima entre um vetor vizinho e o vetor testado são iguais ao 
 conjunto de distâncias mínimas entre os outros vetores e o vetor testado. 
 Normalmente, o ``voto'' do vizinho possui um peso, de acordo com a distância do
-vetor testado e seus ``k'' vizinhos mais próximos. Assim, $\theta$ é estimado com o rótulo desses ``k'' vizinhos mais próximos,
-como mostra a Figura~\ref{fig:fig1}.
+vetor testado e seus ``k'' vizinhos mais próximos. Assim, $\theta$ é estimado 
+com o rótulo desses ``k'' vizinhos mais próximos,como mostra a 
+Figura~\ref{fig:fig1}.
 
-\begin{figure}[!ht]
+\begin{figure}[!hb]
 	\centering
-	\includegraphics[width=.5\textwidth]{img/knn.png}
+	\includegraphics[width=.3\textwidth]{img/knn.png}
 	\caption{representação visual de 19 vetores rotulados com classe A e B e uma
 	classe desconhecida. O vetor com classe desconhecida é portanto, rotulado
 	com seus 4 (k=4) vizinhos mais próximos de acordo com a distância euclidiana
@@ -135,14 +138,14 @@ sendo -3V e +3V usados para absorver ruídos.
 
 Os sinais na Cyclone para comunicação serial são \verb|UART_TXD| para envio e
 \verb|UART_RXD| para receber. O protocolo de comunicação é ilustrado na 
-figura\ref{simulacao}. Cada pacote possui 10 bits, 8 bits de dado e dois para
+figura~\ref{simulacao}. Cada pacote possui 10 bits, 8 bits de dado e dois para
 start e stop. Além disso é necessário um prescaler no código que implementa esse
 protocolo, ele deve contar de 0 até 5208, já que 50MHz/9600 Bit/sec = 5208. 9600
 é o baud rate da serial. Assim sabemos o tempo que se deve aguardar na contagem,
 usando o clock, para igualar o baud rate. Esse método é muito usado em FPGAs
 para fazer o timing com unidades externas, como memória RAM, etc.
 
-\begin{figure}[!hb]
+\begin{figure}[!h]
 \centering
 \includegraphics[width=3.3in]{img/uart.png}
 % where an .eps filename suffix will be assumed under latex, 
@@ -169,7 +172,7 @@ padrão 754 define regras de operação e representação sobre números binári
 ponto flutuante. Para que o número esteja normalizado deve estar no formato da
 Figura~\ref{fig:ieee754ps}.
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \includegraphics[width=.5\textwidth]{img/IEEE_754_Single_Floating_Point_Format}
 \caption{Distribuição dos bits. Precisão simples \cite{wiki:ieee754en}}
@@ -182,6 +185,17 @@ Destes 32 bits 1 bit é para o sinal, 8 bits para o expoente e 23 bits para
 representar a mantissa.
 
 \subsection{Descrição dos sinais das entradas e saídas}
+
+A figura~\ref{fig:visaogeral} é uma visão geral da comunicação entre o Kinect e
+o FPGA.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.5\textwidth]{img/visao_geral}
+\caption{Visão geral}
+\label{fig:visaogeral}
+\end{figure}
+
 
 \begin{itemize}
 
@@ -217,9 +231,122 @@ serem comparados.
 Para implementar este processo foram usados uma memória, um subtrator, um 
 multiplicador, dois somadores, um acumulador, um bloco que calcula a raiz 
 quadrada e um registrador.
-Na implementação das operações e da memória foram utilizadas as megafunctions 
-para ponto flutuante do Quartus II.
+Na implementação das operações e da memória foram utilizadas as 
+\textit{megafunctions} para ponto flutuante do Quartus II.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=.3\textwidth]{../apresentacao/ram}
+\caption{\textit{Megafunction} ``RAM: 1-PORT''}
+\label{fig:ram}
+\end{figure}
+
+A figura~\ref{fig:ram} descreve uma memória criada pelo 
+\textit{MegaWizard Plug-In Manager} do Quartus II. 
+
+O modelo utilizado no trabalho tem as seguintes entradas:
+\begin{itemize}
+\item \textit{data}~(32 bits): armazena o dado;
+\item \textit{wren}~(1 bit): controla a escrita da memória;
+\item \textit{address}~(11 bits): endereço de onde vai ser armazenado o dado;
+\item \textit{clock}~(1 bit): relógio para sincronizar.
+\end{itemize}
+
+Este modelo de memória tem apenas uma saída de dados (q), que tem 32 bits e seu
+valor depende da entrada \textit{address}. A memória é inicializada com
+exemplos pelo componente \textit{altsyncram} atribuindo a entrada
+\verb|init_file| um arquivo ``.mif''.
+
+\begin{figure}[h]
+\centering
+
+\subfigure[ALTFP\_ADD\_SUB]{
+	\includegraphics[width=.3\textwidth]{../apresentacao/add_sub}
+	\label{fig:add_sub}
+}
+\quad
+\subfigure[ALTFP\_MULT]{
+	\includegraphics[width=.3\textwidth]{../apresentacao/mult}
+	\label{fig:mult}
+}
+% Você pode adicionar mais subfigures aqui!
+\label{fig:addsubmult}
+\caption{\textit{Megafunctions} de soma/subtração e multiplicação}
+\end{figure}
+
+A figura~\ref{fig:add_sub} descreve a \textit{megafunction} de soma e subtração de
+ponto flutuante do Quartus II. Ela foi configurada com formato de precisão
+simples de ponto flutuante. Foi utilizado uma latência de 14 ciclos de relógio.
+
+Para fazer a exponenciação foi utilizado um multiplicador de ponto flutuante a
+partir da \textit{megafunction} \verb|ALTFP_MULT|. 
+A figura~\ref{fig:mult} descreve a \textit{megafunction} de multiplicação de
+ponto flutuante do Quartus II. Ela foi configurada com formato de precisão
+simples de ponto flutuante. Foi utilizado uma latência de 11 ciclos de relógio.
+
+
+As \textit{megafunctions} da figura~\ref{fig:addsubmult} foram utilizadas na 
+implementação e tem as seguintes entradas:
+\begin{itemize}
+\item \textit{dataa} e \textit{datab}~(32 bits): dados a serem operados;
+\item \textit{clock}~(1 bit): relógio para sincronizar.
+\end{itemize}
+
+Esta \textit{megafunction} tem apenas uma saída de resultado (\textit{result})
+que tem 32 bits.
+
+
+A figura~\ref{fig:sqrt} descreve a \textit{megafunction} de raiz quadrada de
+ponto flutuante do Quartus II. Ela foi configurada com formato de precisão
+simples de ponto flutuante. Foi utilizado uma latência de 28 ciclos de relógio.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.3\textwidth]{../apresentacao/sqrt}
+\caption{\textit{Megafunction} ALTFP\_SQRT}
+\label{fig:sqrt}
+\end{figure}
+
+A \textit{megafunction} \verb|ALTFP_SQRT| utilizada no trabalho tem as
+seguintes entradas:
+\begin{itemize}
+\item \textit{data}~(32 bits): dado a serem operados;
+\item \textit{clock}~(1 bit): relógio para sincronizar.
+\end{itemize}
+
+Esta \textit{megafunction} tem apenas uma saída de resultado (\textit{result})
+que tem 32 bits.
+
+
+A figura~\ref{fig:compare} descreve a \textit{megafunction} de comparação de
+ponto flutuante do Quartus II. Ela foi configurada com formato de precisão
+simples de ponto flutuante. Foi utilizado uma latência de 3 ciclos de relógio.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.3\textwidth]{../apresentacao/compare}
+\caption{\textit{Megafunction} ALTFP\_COMPARE}
+\label{fig:compare}
+\end{figure}
+
+A \textit{megafunction} \verb|ALTFP_COMPARE| utilizada no trabalho tem as
+seguintes entradas:
+\begin{itemize}
+\item \textit{dataa} e \textit{datab}~(32 bits): dados a serem operados;
+\item \textit{clock}~(1 bit): relógio para sincronizar.
+\end{itemize}
+
+Esta \textit{megafunction} tem apenas uma saída que retorna um se a entrada
+\textit{dataa} é menor do que a \textit{datab} caso contrario retorna zero.
+
+A figura~\ref{fig:blocoperativo} apresenta o bloco operativo 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.3\textwidth]{../apresentacao/knn_sem_controle}
+\caption{\textit{Megafunction} ALTFP\_COMPARE}
+\label{fig:blocoperativo}
+\end{figure}
 
 \subsection{Descrição do bloco de controle}
 
