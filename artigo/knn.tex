@@ -361,7 +361,6 @@ O bloco de controle é composto por 12 estados chamados de \verb|initial|,
 Cada estado tem a seguinte funcionalidade:
 
 \begin{itemize}
-
 \item \verb|initial|: responsável por resetar as variáveis e também por esperar os dados vindos do Kinect;
 \item \verb|load_memory| e \verb|iterate_lm|: Aguardam a inserção dos exemplos na memória;
 \item \verb|acc_reset|: Reseta o registrador do acumulador;
@@ -388,6 +387,16 @@ Abaixo está apresentado o bloco operativo juntamente com o bloco de controle:
 \includegraphics[scale=0.36]{img/circuito_knn.png}
 \end{figure}
 
+\begin{itemize}
+
+\item \verb|adress_exp|:  Envia qual endereço da memória de exemplos deve ser acessado;
+\item \verb|control_acc|: Ativa a carga no registrador acumulador no estado acc load;
+\item \verb|reset_acc|: Reseta o acumulador;
+\item \verb|control_result|: Ativa a carga no registrador que registra o resultado final;
+\item \verb|reset_result|: Reseta o registrador;
+\item \verb|kinect_state|: Sinaliza quando o exemplo vindo do kinect está pronto para ser processado;
+\item \verb|a_less_b|: Resultado da comparação do valor vindo do cálculo da distância euclideana com o valor armezenado no registrador;
+\end{itemize} 
 
 
 \section{Conclus\~ao}\label{sec:figs}
