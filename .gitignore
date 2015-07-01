@@ -12,6 +12,7 @@
 !*.csv
 !*.py
 !*.pdf
+!*.vhdl
 # etc...
 
 # ...even if they are in subdirectories
