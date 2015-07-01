@@ -26,7 +26,7 @@
 \end{frame}
 
 \section{Introdução}
-
+% ALEXANDRE
 \begin{frame}{Objetivo}
 	\begin{itemize}
 	\item Realizar um estudo sobre a aplicação do algoritmo KNN em FPGAs;
@@ -38,6 +38,7 @@
 	\end{itemize}
 \end{frame}
 
+% DIEGO
 \begin{frame}{Kinect Versão 2}
 
 \begin{itemize}
@@ -59,6 +60,7 @@
 
 \end{frame}
 
+% LEANDRO
 \begin{frame}{Algoritmo KNN}
 
 \begin{itemize}
@@ -74,7 +76,7 @@
 
 
 \section{Processo de implementação do algoritmo KNN em VHDL}
-
+% ALEXANDRE
 \begin{frame}{Descrição do bloco operativo}
 	\begin{itemize}
 	\item O bloco operativo é dividido basicamente em 3 loops;
@@ -157,17 +159,21 @@
 
 % LEANDRO SÓ COPIA O TRECHO DE CÓDIGO ABAIXO PARA CIRAR UM NOVO SLIDE
 \begin{frame}{Descrição do bloco de controle}
-	\begin{itemize}
-	\item Bloco de controle
-	\end{itemize}
+	\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1.0\textwidth]{knn}
+	\label{fig:knncalc}
+	\end{figure}
 \end{frame}
 % FIM DA IMPLEMENTAÇÃO DO CALCULO DO KNN
 
 \section{Resultados}
+% DIEGO
 \begin{frame}{Resultados}
 
 \begin{itemize}
-	\item O algoritmo M5Rules atingiu 99\% de acerto rodando no Weka;
+	\item O algoritmo M5Rules atingiu 99\% de acerto, gerou a árvore no
+	Weka e rodou na placa;
 	\item O KNN chegou a 99\% de acerto na placa.
 \end{itemize}
 
