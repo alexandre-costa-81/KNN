@@ -295,17 +295,16 @@ implementação e tem as seguintes entradas:
 Esta \textit{megafunction} tem apenas uma saída de resultado (\textit{result})
 que tem 32 bits.
 
-
-A figura~\ref{fig:sqrt} descreve a \textit{megafunction} de raiz quadrada de
-ponto flutuante do Quartus II. Ela foi configurada com formato de precisão
-simples de ponto flutuante. Foi utilizado uma latência de 28 ciclos de relógio.
-
 \begin{figure}[h]
 \centering
 \includegraphics[width=.3\textwidth]{../apresentacao/sqrt}
 \caption{\textit{Megafunction} ALTFP\_SQRT}
 \label{fig:sqrt}
 \end{figure}
+
+A figura~\ref{fig:sqrt} descreve a \textit{megafunction} de raiz quadrada de
+ponto flutuante do Quartus II. Ela foi configurada com formato de precisão
+simples de ponto flutuante. Foi utilizado uma latência de 28 ciclos de relógio.
 
 A \textit{megafunction} \verb|ALTFP_SQRT| utilizada no trabalho tem as
 seguintes entradas:
@@ -339,14 +338,17 @@ seguintes entradas:
 Esta \textit{megafunction} tem apenas uma saída que retorna um se a entrada
 \textit{dataa} é menor do que a \textit{datab} caso contrario retorna zero.
 
-A figura~\ref{fig:blocoperativo} apresenta o bloco operativo 
-
 \begin{figure}[h]
 \centering
-\includegraphics[width=.3\textwidth]{../apresentacao/knn_sem_controle}
-\caption{\textit{Megafunction} ALTFP\_COMPARE}
+\includegraphics[width=.7\textwidth]{../apresentacao/knn_sem_controle}
+\caption{Bloco operativo}
 \label{fig:blocoperativo}
 \end{figure}
+
+A figura~\ref{fig:blocoperativo} apresenta o bloco operativo. O caminho de
+dados inicia quando o bloco de aquisição de dados envia um sinal de que o 
+\textit{array} com o frame do Kinect já esta preenchido.
+
 
 \subsection{Descrição do bloco de controle}
 
