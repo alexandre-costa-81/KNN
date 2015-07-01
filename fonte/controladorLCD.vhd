@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE  IEEE.STD_LOGIC_1164.all;
-USE  IEEE.STD_LOGIC_ARITH.all;
 USE  IEEE.STD_LOGIC_UNSIGNED.all;
+USE ieee.numeric_std.ALL;
 -- This code displays time in the DE2's LCD Display
 -- Key2  resets time
 ENTITY controladorLCD IS
@@ -19,8 +19,7 @@ END controladorLCD;
 ARCHITECTURE a OF controladorLCD IS
 	
 TYPE STATE_TYPE IS (HOLD, FUNC_SET, DISPLAY_ON, MODE_SET, WRITE_CHAR1,
-WRITE_CHAR2,WRITE_CHAR3,WRITE_CHAR4,WRITE_CHAR5,WRITE_CHAR6,WRITE_CHAR7,
-WRITE_CHAR8, WRITE_CHAR9, WRITE_CHAR10, RETURN_HOME, TOGGLE_E, RESET1, RESET2, 
+WRITE_CHAR2,RETURN_HOME, TOGGLE_E, RESET1, RESET2, 
 RESET3, DISPLAY_OFF, DISPLAY_CLEAR);
 SIGNAL state, next_command: STATE_TYPE;
 SIGNAL DATA_BUS_VALUE: STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -160,70 +159,7 @@ BEGIN
 		  LCD_RW <= '0';
 		  DATA_BUS_VALUE <= X"3" & BCD_HRD0;
 		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR3;
--- Write ASCII hex character in third LCD character location
-		WHEN WRITE_CHAR3 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"78" ;
-		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR4;
--- Write ASCII hex character in fourth LCD character location
-		WHEN WRITE_CHAR4 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"3" & BCD_MIND1;
-	      state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR5;
--- Write ASCII hex character in fifth LCD character location
-		WHEN WRITE_CHAR5 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"3" & BCD_MIND0;
-		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR6;
--- Write ASCII hex character in sixth LCD character location
-		WHEN WRITE_CHAR6 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"3D" ;
-		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR7;
--- Write ASCII hex character in seventh LCD character location
-		WHEN WRITE_CHAR7 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"3" & BCD_SECD1;
-		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR8;
--- Write ASCII hex character in eighth LCD character location
-		WHEN WRITE_CHAR8 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"3" & BCD_SECD0;
-		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR10;
-		WHEN WRITE_CHAR9 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"2E";
-		  state <= TOGGLE_E;
-		  next_command <= WRITE_CHAR10;
-		WHEN WRITE_CHAR10 =>
-		  LCD_E <= '1';
-		  LCD_RS <= '1';
-		  LCD_RW <= '0';
-		  DATA_BUS_VALUE <= X"3" & BCD_TSEC;
-		  state <= TOGGLE_E;
 		  next_command <= RETURN_HOME;
-
 -- Return write address to first character postion
 		WHEN RETURN_HOME =>
 		  LCD_E <= '1';
@@ -243,15 +179,13 @@ BEGIN
 	  END CASE;
 	END IF;
 	
-	if (mem_exp_control_address < 5100) then
+	if (to_integer(signed(mem_exp_control_address)) < 5025) then
 		OP1 <= "0000";
 	else
 		OP1 <= "0001";
 	end if;
 	
   END PROCESS;	
-	
-	
 	
   conveter_OP1 : bin8bcd port map ("0000"&OP1, BCD_JUNTOS_OP1);  
   BCD_HRD1 <= BCD_JUNTOS_OP1 (7 downto 4);
