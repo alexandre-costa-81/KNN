@@ -43,8 +43,8 @@ entity knncalc is
       --pre_add_out                : out std_logic_vector (31 downto 0);
       --control_acc_out            : out std_logic;
       --reset_out                  : out std_logic;
-      --sqrt_result                : out std_logic_vector (31 downto 0);
-      --control_less_distance_out  : out std_logic;
+      sqrt_result                : out std_logic_vector (31 downto 0);
+      control_less_distance_out  : out std_logic;
       --reset_ld_out               : out std_logic;
       end_knn_out                : out std_logic;
       alb_out                    : out std_logic
@@ -229,7 +229,7 @@ architecture arq of knncalc is
       acc            : reg_acc port map(load => control_acc, d => add_acc, q => acc_mem, reset => reset_acc);
       sqrt           : fp_sqrt port map(clock => clock, data => acc_mem, result => sqrt_mem);
       control        : control_unit port map(reset_from_control => reset_from_control, receive_state => receive_state_signal, end_knn => end_knn, alb => alb_signal, control_less_distance => control_less_distance, control_acc => control_acc, wren_knt => wren_knt, data_knt => data_knt, st => state, clock => clock, reset => reset, address_exp => mem_exp_control_address, address_knt => mem_knt_control_address, data => control_mem_data, wren => mem_wren_control, address_result => mem_result_control_address, wren_result => wren_result, reset_acc => reset_acc, reset_ld_out => reset_ld);
-      --mem_result      : ram  port map(address => mem_result_control_address, clock => clock, data => sqrt_mem, wren => wren_result, q => mem_result_data);
+      mem_result      : ram  port map(address => mem_result_control_address, clock => clock, data => sqrt_mem, wren => wren_result, q => mem_result_data);
       less_distance  : reg port map(load => control_less_distance, e => mem_exp_control_address, e_out => address_final, d => sqrt_mem, q => ld_out, reset => reset_ld);		
       compare        : fp_compare port map(clock => clock, dataa => sqrt_mem, datab => ld_out, alb => alb_signal);
 		LCD 				: controladorLCD port map (mem_exp_control_address => address_final, reset => reset, clk_50Mhz => clock, LCD_RS => LCD_RS, LCD_E => LCD_E, LCD_ON => LCD_ON, RESET_LED => RESET_LED, LCD_RW => LCD_RW, DATA_BUS => DATA_BUS);
@@ -247,13 +247,13 @@ architecture arq of knncalc is
       --dataa_out                   <= mem_exp_sub_data;
       --datab_out                   <= mem_knt_sub_data;
       --pre_add_out                 <= result_pre_add;
-      --memory_result               <= mem_result_data;
-      --sqrt_result                 <= sqrt_mem;
+      memory_result               <= mem_result_data;
+      sqrt_result                 <= sqrt_mem;
       --reset_out                   <= reset_acc;
-      --control_less_distance_out   <= control_less_distance;
+      control_less_distance_out   <= control_less_distance;
       --less_distance_out           <= ld_out;
       --reset_ld_out                <= reset_ld;
       --end_knn_out                 <= end_knn;
-      --alb_out                     <= alb_signal;
+      alb_out                     <= alb_signal;
 		address_final_out <= address_final;
 end arq;

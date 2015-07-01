@@ -433,7 +433,7 @@ begin
                control_acc_aux            := '1';
                counter_accumulate         := counter_accumulate + 1;
                counter_accumulate_address := counter_accumulate_address + 1;	
-               mod_aux                    := counter_accumulate_address mod 6;
+               mod_aux                    := counter_accumulate_address mod 75;
                if (mod_aux = 0) then
                   example_ok <= '1';
                end if;
