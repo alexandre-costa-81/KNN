@@ -1,4 +1,3 @@
-
 \subsection{Descrição do bloco operativo}
 
 O bloco operativo é dividido basicamente em 3 loops, onde o primeiro loop vai
@@ -39,7 +38,6 @@ exemplos pelo componente \textit{altsyncram} atribuindo a entrada
 
 \begin{figure}[h]
 \centering
-
 \subfigure[ALTFP\_ADD\_SUB]{
 	\includegraphics[width=.3\textwidth]{../apresentacao/add_sub}
 	\label{fig:add_sub}
@@ -49,9 +47,8 @@ exemplos pelo componente \textit{altsyncram} atribuindo a entrada
 	\includegraphics[width=.3\textwidth]{../apresentacao/mult}
 	\label{fig:mult}
 }
-% Você pode adicionar mais subfigures aqui!
-\label{fig:addsubmult}
 \caption{\textit{Megafunctions} de soma/subtração e multiplicação}
+\label{fig:addsubmult}
 \end{figure}
 
 A figura~\ref{fig:add_sub} descreve a \textit{megafunction} de soma e subtração de
@@ -127,4 +124,22 @@ Esta \textit{megafunction} tem apenas uma saída que retorna um se a entrada
 
 A figura~\ref{fig:blocoperativo} apresenta o bloco operativo. O caminho de
 dados inicia quando o bloco de aquisição de dados envia um sinal de que o 
-\textit{array} com o frame do Kinect já esta preenchido.
+\textit{array} com o frame do Kinect já preenchido.
+O operador de sutração recebe dois \verb|std_logic_vector| de 32 bist e retorna
+para o somador. Este faz a soma do resultado mais dez para não dar underflow
+pois o proximo passo é fazer a exponenciação. Para fazer a exponênciação foi 
+utilizado um multiplicador que recebe a saída do somador nas duas entradas de
+dados. O resultado é passado para um somador que vai receber o resultado da 
+multiplicação e a saída do registrador. Este registrador é responsavel pelo
+somatório da formulado KNN, ou seja, é um registrador-acumulador 
+(\textit{acc}). A saída deste registrador é duplicada onde um sinal vai para 
+a a raíz quadrada e o outro vai para a segunda entrada do somador. A saída raíz
+quadrada (\textit{sqrt}) é duplicada e um sinal vai para a entrada do
+comparador e a outra para a entrada de um registrador (\textit{result}). A
+saída do \textit{result} é a segunda entrada do comparador. O resultado do
+comparador é uma entrada do controle. A entrada de \textit{load} tanto do 
+\textit{acc} quanto a do \textit{result} são saídas do controle para
+sincronizar com os resultados das operações. O registrador \textit{result} tem
+uma segunda entrada que vem do controle e tem o endereço de memória do vizinho
+mais promissor. A saída correspondente a esta entrada vai para o controle do 
+\textit{display} LCD para mostrar o resultado.
