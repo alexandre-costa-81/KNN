@@ -64,13 +64,19 @@ robusto ao fundos de imagem confusos \cite{ren2011robust}. O uso do Kinect pode
 simplificar muitas das etapas no processamento de vídeos, já que ele captura e
 pré-processa as imagens \cite{Andersson:2014}.
 
+O objetivo deste projeto é realizar uma interface entre o sentor Kinect Versão 2,
+a placa Altera Cyclone (2C35) e o computador para coleta em tempo real dos dados para
+executar em um algoritimo de classificação com o objetivo de reconhecimento de classes.
+
 \section{Trabalhos relacionados}
 
-Choi alcançou 89\% de acurácia em 2014 para o reconhecimento de gestos humanos
+Embora existam pesquisas relacionadas a reconhecimento de padrões utilizando o Kinect, encontra-se uma lacuna no que diz respeito a
+utilização de FPGA para execução de algoritmos de aprendizagem de máquina. No campo de pesquisa de reconhecimento de padrões
+utilizando o Kinect, Choi alcançou 89\% de acurácia em 2014 para o reconhecimento de gestos humanos
 usando redes neurais \cite{choi2014design}. Zhang alcançou acurácia de 99.14\%
-usando SVMs \cite{zhang2014novel}. Saha alcançou 90.83\% usando ensemble trees
-\cite{saha2014study}. Os trabalhos usaram uma média de 6 poses. O diferencial
-do nosso trabalho está no uso da FPGA.
+usando SVMs \cite{zhang2014novel}. Já Saha alcançou 90.83\% usando ensemble trees
+\cite{saha2014study}. Todos estes trabalhos usaram uma média de 6 poses. 
+O diferencial deste trabalho está no uso da FPGA.
 
 \section{Kinect Vers\~ao 2} \label{sec:kinectversion2}
 
@@ -119,9 +125,9 @@ vetor testado e seus ``k'' vizinhos mais próximos. Assim, $\theta$ é estimado
 com o rótulo desses ``k'' vizinhos mais próximos,como mostra a 
 Figura~\ref{fig:fig1}.
 
-\begin{figure}[!hb]
+\begin{figure}[!ht]
 	\centering
-	\includegraphics[width=.3\textwidth]{img/knn.png}
+	\includegraphics[scale=0.36]{img/knn.png}
 	\caption{representação visual de 19 vetores rotulados com classe A e B e uma
 	classe desconhecida. O vetor com classe desconhecida é portanto, rotulado
 	com seus 4 (k=4) vizinhos mais próximos de acordo com a distância euclidiana
@@ -208,23 +214,20 @@ vai para o estado inicial.
 
 \item \verb|uart_rxd|:
 
-\item \verb|key|:
-
 \item \verb|uart_txd|:
 
 \item \verb|end_knn_out|: é um pino de saída que sinaliza quando 
 terminou o calculo do KNN.
 
-\item \verb|alb_out|:
 
 \end{itemize}
 
 \subsection{Descrição do bloco operativo}
 
-O bloco operativo é dividito basicamente em 3 loops, onde o primeiro loop vai
-acumular os valores e o segundo loop serve apenas para estabilizar o calculo da
+O bloco operativo é dividido basicamente em 3 loops, onde o primeiro loop vai
+acumular os valores e o segundo loop tem o objetivo de estabilizar o calculo da
 raiz quadrada. Quando este processo fica pronto o valor é comparado e
-armazenado em um registrador. O terceiro loop serve para carregar o priximo
+armazenado em um registrador. O terceiro loop serve para carregar o próximo
 exemplo armazenado na memória e termina quando não existem mais exemplos para
 serem comparados.
 
@@ -361,14 +364,14 @@ O bloco de controle é composto por 12 estados chamados de \verb|initial|,
 Cada estado tem a seguinte funcionalidade:
 
 \begin{itemize}
-\item \verb|initial|: responsável por resetar as variáveis e também por esperar os dados vindos do Kinect;
+\item \verb|initial|: responsável por resetar as variáveis e também por esperar os dados vindos da interface com o Kinect;
 \item \verb|load_memory| e \verb|iterate_lm|: Aguardam a inserção dos exemplos na memória;
 \item \verb|acc_reset|: Reseta o registrador do acumulador;
 \item \verb|arith| e \verb|iterate_arith|: Estado da realização das operações matemáticas das distâncias euclidianas;
 \item \verb|acc_load|: Armazena a soma temporária da distância euclideana no registrador;
 \item \verb|sqrt| e \verb|iterate_sqrt|: Realiza o cálculo da raiz quadrada da distância euclideana;
 \item \verb|result_load|: Utiliza o componente comparador e carrega o resultado da distância euclideâna no registrador de resultado;
-\item \verb|iterate|: Gerencia se o próximo estado será retornar para o "arith" e continuar calculando ou se já terminou os cálculos;
+\item \verb|iterate|: Gerencia se o próximo estado será retornar para o "arith" e continuar calculando ou se já terminou os cálculos 
 e deve-se ir para o estado "final";
 \item \verb|final|: Mostra o resultado na placa e informa a interface com o KNN que a próxima entrada já pode ser enviada.
 \end{itemize}
@@ -386,6 +389,8 @@ Abaixo está apresentado o bloco operativo juntamente com o bloco de controle:
 \centering
 \includegraphics[scale=0.36]{img/circuito_knn.png}
 \end{figure}
+
+Descrição dos sinais do controle:
 
 \begin{itemize}
 
