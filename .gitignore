@@ -18,3 +18,4 @@
 
 # ...even if they are in subdirectories
 !*/
+*.pdf
