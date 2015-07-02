@@ -20,7 +20,7 @@ Cada estado tem a seguinte funcionalidade:
 \item \verb|arith| e \verb|iterate_arith|: Estado da realização das operações matemáticas das distâncias euclidianas;
 \item \verb|acc_load|: Armazena a soma temporária da distância euclideana no registrador;
 \item \verb|sqrt| e \verb|iterate_sqrt|: Realiza o cálculo da raiz quadrada da distância euclideana;
-\item \verb|result_load|: Utiliza o componente comparador e carrega o resultado da distância euclideâna no registrador de resultado;
+\item \verb|result_load| e \verb|iterate_rl|: Utiliza o componente comparador e carrega o resultado da distância euclideâna no registrador de resultado;
 \item \verb|iterate|: Gerencia se o próximo estado será retornar para o ``arith'' e continuar calculando ou se já terminou os cálculos 
 e deve-se ir para o estado ``final'';
 \item \verb|final|: Mostra o resultado na placa e informa a interface com o KNN que a próxima entrada já pode ser enviada.
