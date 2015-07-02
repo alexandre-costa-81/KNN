@@ -1,3 +1,11 @@
 \section{Conclus\~ao}\label{sec:figs}
 
-Este trabalho desenvolveu um algoritmo em VHDL que...
+Este trabalho desenvolveu uma interface que envia-se dados do Kinect para o computador e do computador para a placa Altera, o KNN foi implementado em VHDL e executado na placa Altera Cyclone (2C35).
+
+O tempo de execução do algoritmo na placa Altera foi extremamente rápido, levando menos de 1 segundo para processar uma entrada de dados. Esta velocidade de execução na placa mostra o potencial do algoritmo implementado em FPGA. Uma das grandes dificuldades para classificação de
+dados em tempo real é devido a lentidão de resposta, o que torna o projeto desenvolvido com maior relevância devido a sua velocidade de
+execução. 
+
+O projeto mostrou também que embora o sensor Kinect não estive-se ligado diretamente na placa Altera, mas possuindo um computador como interface, a velocidade de comunicação do sensor com a placa se mostrou eficaz, fazendo a comunicação de forma extremamente rápida. Embora possa ser feito alguns ajustes no projeto para melhorar esta comunicação kinect -> computador -> placa, o tempo de transmissão dos dados foi eficiente.
+
+
