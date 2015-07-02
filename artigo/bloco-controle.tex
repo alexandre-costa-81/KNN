@@ -6,6 +6,11 @@ O bloco de controle é composto por 12 estados chamados de \verb|initial|,
 \verb|iterate_sqrt|, \verb|result_load|, \verb|iterate| e 
 \verb|final|.
 
+\begin{figure}[!hb]
+\centering
+\includegraphics[scale=0.2]{img/control_unit.png}
+\end{figure}
+\newpage
 Cada estado tem a seguinte funcionalidade:
 
 \begin{itemize}
@@ -16,23 +21,17 @@ Cada estado tem a seguinte funcionalidade:
 \item \verb|acc_load|: Armazena a soma temporária da distância euclideana no registrador;
 \item \verb|sqrt| e \verb|iterate_sqrt|: Realiza o cálculo da raiz quadrada da distância euclideana;
 \item \verb|result_load|: Utiliza o componente comparador e carrega o resultado da distância euclideâna no registrador de resultado;
-\item \verb|iterate|: Gerencia se o próximo estado será retornar para o "arith" e continuar calculando ou se já terminou os cálculos 
-e deve-se ir para o estado "final";
+\item \verb|iterate|: Gerencia se o próximo estado será retornar para o ``arith'' e continuar calculando ou se já terminou os cálculos 
+e deve-se ir para o estado ``final'';
 \item \verb|final|: Mostra o resultado na placa e informa a interface com o KNN que a próxima entrada já pode ser enviada.
 \end{itemize}
 
-\begin{figure}[!ht]
-\centering
-\includegraphics[scale=0.2]{img/control_unit.png}
-\end{figure}
-
-\newpage
 
 Abaixo está apresentado o bloco operativo juntamente com o bloco de controle:
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
 \centering
-\includegraphics[scale=0.36]{img/circuito_knn.png}
+\includegraphics[scale=0.3]{img/circuito_knn.png}
 \end{figure}
 
 Descrição dos sinais do controle:

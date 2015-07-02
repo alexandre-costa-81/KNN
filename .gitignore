@@ -11,7 +11,6 @@
 !*.png
 !*.csv
 !*.py
-!*.pdf
 !*.vhdl
 !*.zip
 # etc...

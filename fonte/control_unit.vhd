@@ -33,7 +33,7 @@ end control_unit;
 
 architecture arq of control_unit is
 -- TYPEs
-type state is (initial, load_memory, load_memory_it, accumulate_reset, accumulate, accumulate_it, sqrt, sqrt_it, accumulate_load, mem_result_load, mem_result_load_it, iterate, final);
+type state is (initial, load_memory, iterate_lm, acc_reset, arith, iterate_arith, sqrt_state, sqrt_it, acc_load, result_load, iterate_rl, iterate, final);
 
 -- SIGNALs
 signal current_state             : state;
@@ -126,12 +126,12 @@ begin
 				reset_from_control_tmp     <= '0';
             st                         <= 1;
          if (end_loop = '0') then
-            next_state <= load_memory_it;
+            next_state <= iterate_lm;
          else
-            next_state <= accumulate_reset;
+            next_state <= acc_reset;
          end if;
 
-         when load_memory_it =>
+         when iterate_lm =>
             --address_knt_tmp          := std_logic_vector(to_unsigned(aux_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_tmp, address_exp_tmp'length));
@@ -149,7 +149,7 @@ begin
             st                         <= 2;
             next_state                 <= load_memory;
 
-         when accumulate_reset =>
+         when acc_reset =>
             --address_knt_tmp          := "000000000000";
             address_knt_tmp            := 0;
             address_exp_tmp            := "000000000000";
@@ -165,9 +165,9 @@ begin
             sqrt_calculing             <= '0';
 				reset_from_control_tmp     <= '0';
             st                         <= 3;
-            next_state                 <= accumulate_it;
+            next_state                 <= iterate_arith;
 
-         when accumulate =>
+         when arith =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
@@ -184,12 +184,12 @@ begin
 				reset_from_control_tmp     <= '0';
             st                         <= 4;
             if (control_acc_tmp = '0') then
-               next_state <= accumulate_it;
+               next_state <= iterate_arith;
             else
-               next_state <= accumulate_load;
+               next_state <= acc_load;
             end if;
 
-         when accumulate_it =>
+         when iterate_arith =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
@@ -205,9 +205,9 @@ begin
             sqrt_calculing             <= '0';
 				reset_from_control_tmp     <= '0';
             st                         <= 5;
-            next_state                 <= accumulate;
+            next_state                 <= arith;
 
-         when accumulate_load =>
+         when acc_load =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
@@ -225,12 +225,12 @@ begin
             st                         <= 6;
 
             if (example_ok = '0') then
-               next_state <= accumulate;
+               next_state <= arith;
             else
                next_state <= sqrt_it;
             end if;
 
-         when sqrt =>
+         when sqrt_state =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
@@ -250,7 +250,7 @@ begin
             if (sqrt_ok = '0') then
                next_state <= sqrt_it;
             else
-               next_state <= mem_result_load;
+               next_state <= result_load;
             end if;
 
          when sqrt_it =>
@@ -270,9 +270,9 @@ begin
             counter_memory_clear       <= '0';
             counter_accumulate_clear   <= '0';
             st                         <= 8;
-            next_state                 <= sqrt;
+            next_state                 <= sqrt_state;
 
-         when mem_result_load =>
+         when result_load =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
             address_knt_tmp            := mod_accumulate_tmp;
             address_exp_tmp            := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
@@ -293,12 +293,12 @@ begin
             end if;
 
             if (comp_ok = '0') then
-               next_state <= mem_result_load_it;
+               next_state <= iterate_rl;
             else
                next_state <= iterate;
             end if;
 
-         when mem_result_load_it =>
+         when iterate_rl =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
             address_knt_tmp         := mod_accumulate_tmp;
             address_exp_tmp         := std_logic_vector(to_unsigned(aux_accumulate_tmp, address_exp_tmp'length));
@@ -317,7 +317,7 @@ begin
 
             st                      <= 9;
             counter_accumulate_clear<= '0';
-            next_state              <= mem_result_load;
+            next_state              <= result_load;
 
          when iterate =>
             --address_knt_tmp         := std_logic_vector(to_unsigned(mod_accumulate_tmp, address_knt_tmp'length));
@@ -334,7 +334,7 @@ begin
             counter_accumulate_clear   <= '0';
 
             if (end_accumulate_loop = '0') then
-               next_state <= accumulate;
+               next_state <= arith;
             else
                next_state <= final;
             end if;
