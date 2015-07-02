@@ -6,11 +6,7 @@ O bloco de controle é composto por 12 estados chamados de \verb|initial|,
 \verb|iterate_sqrt|, \verb|result_load|, \verb|iterate| e 
 \verb|final|.
 
-\begin{figure}[!hb]
-\centering
-\includegraphics[scale=0.2]{img/control_unit.png}
-\end{figure}
-\newpage
+
 Cada estado tem a seguinte funcionalidade:
 
 \begin{itemize}
@@ -25,6 +21,11 @@ Cada estado tem a seguinte funcionalidade:
 e deve-se ir para o estado ``final'';
 \item \verb|final|: Mostra o resultado na placa e informa a interface com o KNN que a próxima entrada já pode ser enviada.
 \end{itemize}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.2]{img/control_unit.png}
+\end{figure}
 
 
 Abaixo está apresentado o bloco operativo juntamente com o bloco de controle:

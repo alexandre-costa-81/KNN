@@ -8,6 +8,16 @@ distância Euclidiana. De maneira simplificada, a regra de classificação do KN
 é associar a uma amostra de teste, o rótulo da maioria das categorias de seus
 ``k'' vizinhos mais próximos.
 
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.36]{img/knn.png}
+	\caption{representação visual de 19 vetores rotulados com classe A e B e uma
+	classe desconhecida. O vetor com classe desconhecida é portanto, rotulado
+	com seus 4 (k=4) vizinhos mais próximos de acordo com a distância euclidiana
+	entre eles.}
+	\label{fig:fig1}
+\end{figure}
+
 Um conjunto de treino X consiste em n pares de vetores e rótulos, dispersos em
 um espaço de classes. Dado um novo par (x; $\theta$), onde apenas a medida x é
 observável, o valor de $\theta$	é estimado pela utilização dos dados contidos
@@ -23,12 +33,3 @@ vetor testado e seus ``k'' vizinhos mais próximos. Assim, $\theta$ é estimado
 com o rótulo desses ``k'' vizinhos mais próximos,como mostra a 
 Figura~\ref{fig:fig1}.
 
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[scale=0.36]{img/knn.png}
-	\caption{representação visual de 19 vetores rotulados com classe A e B e uma
-	classe desconhecida. O vetor com classe desconhecida é portanto, rotulado
-	com seus 4 (k=4) vizinhos mais próximos de acordo com a distância euclidiana
-	entre eles.}
-	\label{fig:fig1}
-\end{figure}
