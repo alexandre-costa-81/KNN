@@ -1,0 +1,26 @@
+\section{Resultados}
+
+Foram coletados 174 exemplos divididos igualmente entre mãos para cima e para baixo. Para descobrir a quantidade de exemplos necessários para que o KNN possa reconhecer essas posições, foram testadas diferentes quantidades desses exemplos coletados no conjunto de treinamento. Inicialmente 5\%, 10\%, 15\%, então 20\%, 30\% e 40\%. Se observou que 30\%(52 exemplos) já alcança mais de 99\% de taxa de acerto, então se diminuiu para 25\% dos dados para treinamento, ainda com 99\% de acertos. Já com 20\% dos dados para treinamento, o resultado fica em 95\% de acertos com base de teste em cima do resto dos dados. O M5Rules também alcançou 99\% de taxa de acerto, porém com uma quantidade menor que o KNN, cerca de 20\% dos resultados são suficientes, foram testados 5\%, 10\%, 15\% e 20\%. 
+
+\begin{table}[h]
+\centering
+\caption{Resultados}
+\label{my-label}
+\begin{tabular}{|l|l|l|}
+\hline	
+     & KNN & M5Rules \\
+\hline	
+5\%  & 64.84\% & 28.22\% \\
+\hline	
+10\% & 91.71\% & 88.18\% \\
+\hline	
+15\% & 93.91\% & 87.98\% \\
+\hline	
+20\% & 95.68\% & 99.00\% \\
+\hline	
+30\% & 100.00\% & 100.00\% \\
+\hline	
+40\% & 100.00\% & 100.00\% \\
+\hline	
+\end{tabular}
+\end{table}
