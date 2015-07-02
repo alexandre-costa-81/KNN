@@ -31,204 +31,28 @@
 %\begin{abstract}
 %  This paper describes ...
 %\end{abstract}
-     
-\begin{resumo}
 
-Neste trabalho foi implementado o algoritmo KNN na placa Altera Cyclone (2C35)
-FPGA de 35.000 LEs, afim de reconhecer indivíduos. Sendo que a entrada é o
-esqueleto do indivíduo, esse esqueleto é inferido a partir de filmagem 
-tridimensional realizada pelo Kinect Versão 2 no seu SDK. Foi obtido sucesso em
-capturar frames, enviar pela porta serial até a placa e mostrar em qual classe,
-de uma serie de classes pré definidas, a posição atual da pessoa se encontra.
+\input{resumo}
 
-\end{resumo}
+\input{introducao}
 
-\section{Introdu\c{c}\~ao}
+\input{trabalhos-relacionados}
 
-FPGAS são muito usadas para protótipos, onde não se justifica um projeto ASIC
-personalizado. Entre as vantagens das FPGAS estão o alto paralelismo e
-adaptabilidade, com paralelismo para dados, tarefas, pipeline ou uma mistura
-desses. FPGAS também são muito eficientes na questão da quantidade de bits
-necessários para uma tarefa. Em FPGAS a lógica de instruções e de-codificação
-de endereços se torna desnecessária, isso possibilita alcançar throughput muito
-maior que em processadores tradicionais, assim como uma redução da quantidade
-de energia usada. FPGAS vem se tornando cada vez mais poderosas, o que torna
-seu uso cada vez mais interessante \cite{najjar2003high}.
+\input{kinect}
 
-O uso de gestos é um dos meios de Interação Humano-Computador (Human-Computer-
-Interaction - HCI) mais naturais e intuitivos. Além disso existem aplicações em
-realidade virtual, linguagem de sinais, e jogos de computador. Criar sistemas
-para o reconhecimento de gestos ainda é um problema desafiador. Métodos usando
-imagens de profundidade vem se tornando cada vez mais populares, pois é mais
-robusto ao fundos de imagem confusos \cite{ren2011robust}. O uso do Kinect pode
-simplificar muitas das etapas no processamento de vídeos, já que ele captura e
-pré-processa as imagens \cite{Andersson:2014}.
+\input{algoritmo-knn}
 
-O objetivo deste projeto é realizar uma interface entre o sentor Kinect Versão 2,
-a placa Altera Cyclone (2C35) e o computador para coleta em tempo real dos dados para
-executar em um algoritimo de classificação com o objetivo de reconhecimento de classes.
+\input{comunicacao-serial}
 
-\section{Trabalhos relacionados}
+\input{implementacao-knn-vhdl}
 
-Embora existam pesquisas relacionadas a reconhecimento de padrões utilizando o Kinect, encontra-se uma lacuna no que diz respeito a
-utilização de FPGA para execução de algoritmos de aprendizagem de máquina. No campo de pesquisa de reconhecimento de padrões
-utilizando o Kinect, Choi alcançou 89\% de acurácia em 2014 para o reconhecimento de gestos humanos
-usando redes neurais \cite{choi2014design}. Zhang alcançou acurácia de 99.14\%
-usando SVMs \cite{zhang2014novel}. Já Saha alcançou 90.83\% usando ensemble trees
-\cite{saha2014study}. Todos estes trabalhos usaram uma média de 6 poses. 
-O diferencial deste trabalho está no uso da FPGA.
-
-\section{Kinect Vers\~ao 2} \label{sec:kinectversion2}
-
-O Kinect é um sensor equipado de uma câmera RGB, um sensor de profundidade
-composto de um emissor de luz infravermelho e uma câmera sensível à
-profundidade.
-
-O principio básico por trás do sensor de profundidade do Kinect é a emissão de
-um padrão de infravermelho e a captura simultânea da imagem desse infravermelho
-com uma câmera tradicional equipada com um filtro, que permite capturar o 
-infravermelho e bloquear outras formas de onda. O processador de imagens do 
-Kinect usa as posições relativas dos pontos 
-no padrão do infravermelho para calcular o deslocamento da profundidade em cada
-posição de pixel na imagem.
-
-Cada pixel do mapa de profundidade representa a distância cartesiana, em 
-milímetros, do plano da câmera até o objeto mais próximo, naquela coordenada
-(x, y) em particular. Se o valor do pixel é 0, isso indica que o sensor não 
-encontrou nenhum objeto no seu espaço de alcance naquela localização (x, y).
-Essa projeção é mencionado como espaço de profundidade. Os valores correntes de
-profundidade são as distâncias do plano da câmera, ao invés das do sensor 
-propriamente dito.
-
-\section{Algoritmo KNN}
-
-O algoritmo de aprendizado supervisionado KNN é utilizado para classificar um
-objeto não rotulado, baseado no rótulo de seus vizinhos mais próximos em um
-espaço de exemplos \cite{Andersson:2014}. Essa proximidade é, frequentemente,
-baseada em uma métrica de distância entre dois pontos, por  exemplo, a
-distância Euclidiana. De maneira simplificada, a regra de classificação do KNN
-é associar a uma amostra de teste, o rótulo da maioria das categorias de seus
-``k'' vizinhos mais próximos.
-
-Um conjunto de treino X consiste em n pares de vetores e rótulos, dispersos em
-um espaço de classes. Dado um novo par (x; $\theta$), onde apenas a medida x é
-observável, o valor de $\theta$	é estimado pela utilização dos dados contidos
-no conjunto X com os vetores e rótulos já conhecidos (supervisionado). Um vetor
-x' é um vizinho mais próximo de x, se segundo a Equação:
-
-$d(x_{n}', x) = min(x_i, x) i = 1, 2, ...,n$
-
-A distância mínima entre um vetor vizinho e o vetor testado são iguais ao 
-conjunto de distâncias mínimas entre os outros vetores e o vetor testado. 
-Normalmente, o ``voto'' do vizinho possui um peso, de acordo com a distância do
-vetor testado e seus ``k'' vizinhos mais próximos. Assim, $\theta$ é estimado 
-com o rótulo desses ``k'' vizinhos mais próximos,como mostra a 
-Figura~\ref{fig:fig1}.
-
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[scale=0.36]{img/knn.png}
-	\caption{representação visual de 19 vetores rotulados com classe A e B e uma
-	classe desconhecida. O vetor com classe desconhecida é portanto, rotulado
-	com seus 4 (k=4) vizinhos mais próximos de acordo com a distância euclidiana
-	entre eles.}
-	\label{fig:fig1}
-\end{figure}
-
-\section{Comunicação serial}
-
-RS-232 é uma comunicação full-duplex(ida e volta ao mesmo tempo). Os sinais são
-representados com voltagens em relação ao ground(chamado common). Ele possui 
-muitas linhas de handshaking. O sinal muitas vezes está entre -12V e +12V,
-sendo -3V e +3V usados para absorver ruídos.
-
-Os sinais na Cyclone para comunicação serial são \verb|UART_TXD| para envio e
-\verb|UART_RXD| para receber. O protocolo de comunicação é ilustrado na 
-figura~\ref{simulacao}. Cada pacote possui 10 bits, 8 bits de dado e dois para
-start e stop. Além disso é necessário um prescaler no código que implementa esse
-protocolo, ele deve contar de 0 até 5208, já que 50MHz/9600 Bit/sec = 5208. 9600
-é o baud rate da serial. Assim sabemos o tempo que se deve aguardar na contagem,
-usando o clock, para igualar o baud rate. Esse método é muito usado em FPGAs
-para fazer o timing com unidades externas, como memória RAM, etc.
-
-\begin{figure}[!h]
-\centering
-\includegraphics[width=3.3in]{img/uart.png}
-% where an .eps filename suffix will be assumed under latex, 
-% and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% via \DeclareGraphicsExtensions.
-\caption{Esquema de transmissão serial.}
-\label{simulacao}
-\end{figure}
-
-\section{Processo de implementação do algoritmo KNN em VHDL}
-
-O algoritmo usado na implementação VHDL foi o KNN pela distancia euclidiana. 
-Esta é a distância entre dois pontos, que pode ser provada pela aplicação
-repetida do teorema de Pitágoras \cite{wiki:ieee754en}. A distancia euclidiana
-entre o ponto P($p_1, p_2, p_3, ..., p_n$) e Q($q_1, q_2, q_3, ..., q_n$) é
-dada por:
-
-$d(p, q) = \sqrt{\sum\limits_{i=1}^n (q_i - p_i)^2}$
-
-Para facilitar a implementação em VHDL, foi considerado K igual a um. 
-
-Os pontos recebidos pela parte de aquisição de dados vem no padrão IEEE 754. O
-padrão 754 define regras de operação e representação sobre números binários em
-ponto flutuante. Para que o número esteja normalizado deve estar no formato da
-Figura~\ref{fig:ieee754ps}.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=.5\textwidth]{img/IEEE_754_Single_Floating_Point_Format}
-\caption{Distribuição dos bits. Precisão simples \cite{wiki:ieee754en}}
-\label{fig:ieee754ps}
-\end{figure}
-
-A precisão de representação numérica utilizada neste trabalho foi a precisão 
-simples. Onde possui 32 bits que em representação seriam 7 digitos decimais.
-Destes 32 bits 1 bit é para o sinal, 8 bits para o expoente e 23 bits para 
-representar a mantissa.
-
-\subsection{Descrição dos sinais das entradas e saídas}
-
-A figura~\ref{fig:visaogeral} é uma visão geral da comunicação entre o Kinect e
-o FPGA.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=.5\textwidth]{img/visao_geral}
-\caption{Visão geral}
-\label{fig:visaogeral}
-\end{figure}
-
-
-\begin{itemize}
-
-\item \verb|clock|: é um pino de entrada para prover o sincronismo entre as
-operações aritimeticas.
-
-\item \verb|reset|: é um pino de entrada que reinicia o processo de calculo do
-KNN. quando esta em 0 os registradores são reiniciados e a maquina de estados
-vai para o estado inicial.
-
-\item \verb|uart_rxd|:
-
-\item \verb|uart_txd|:
-
-\item \verb|end_knn_out|: é um pino de saída que sinaliza quando 
-terminou o calculo do KNN.
-
-
-\end{itemize}
+\input{descricao-entrada-saida}
 
 \input{bloco-operativo}
 
 \input{bloco-controle}
 
-\section{Conclus\~ao}\label{sec:figs}
-
-Este trabalho desenvolveu um algoritmo em VHDL que...
+\input{conclusao}
 
 %(Figure~\ref{fig:exampleFig1}), otherwise justified and indented by 0.8cm on
 %both margins, as shown in Figure~\ref{fig:exampleFig2}. The caption font must

@@ -1,0 +1,21 @@
+\section{Kinect Vers\~ao 2} \label{sec:kinectversion2}
+
+O Kinect é um sensor equipado de uma câmera RGB, um sensor de profundidade
+composto de um emissor de luz infravermelho e uma câmera sensível à
+profundidade.
+
+O principio básico por trás do sensor de profundidade do Kinect é a emissão de
+um padrão de infravermelho e a captura simultânea da imagem desse infravermelho
+com uma câmera tradicional equipada com um filtro, que permite capturar o 
+infravermelho e bloquear outras formas de onda. O processador de imagens do 
+Kinect usa as posições relativas dos pontos 
+no padrão do infravermelho para calcular o deslocamento da profundidade em cada
+posição de pixel na imagem.
+
+Cada pixel do mapa de profundidade representa a distância cartesiana, em 
+milímetros, do plano da câmera até o objeto mais próximo, naquela coordenada
+(x, y) em particular. Se o valor do pixel é 0, isso indica que o sensor não 
+encontrou nenhum objeto no seu espaço de alcance naquela localização (x, y).
+Essa projeção é mencionado como espaço de profundidade. Os valores correntes de
+profundidade são as distâncias do plano da câmera, ao invés das do sensor 
+propriamente dito.
